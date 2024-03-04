@@ -15,7 +15,7 @@ const bodyParser = require('body-parser');
 
 const session = require( 'express-session' );
 
-const cookieSession = require( 'cookie-session' );
+// const cookieSession = require( 'cookie-session' );
 
 const LocalStrategy = require( 'passport-local' ).Strategy;
 

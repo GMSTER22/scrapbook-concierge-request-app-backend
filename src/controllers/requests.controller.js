@@ -45,10 +45,10 @@ const createRequest = async ( req, res ) => {
 
   console.log( request );
 
-  res.status( 201 ).send( 'request created' );
+  res.status( 201 ).json( request );
 
 }
-
+// http://localhost:3000/requests/65b1ce63b1f4f9aff918b21b/users/657bb93ad76068effafd9f97%20%7D
 const updateRequest = async ( req, res ) => {
 
   // const userId = req.user.id;
@@ -65,15 +65,15 @@ const updateRequest = async ( req, res ) => {
 
   const isAdmin = req.user.admin;
 
-  const isUserRequest = userId.equals( request.users[ 0 ] );
+  const isRequester = userId.equals( request.users[ 0 ] );
 
   console.log( 'requests submitted ==>', numberOfRequestsSubmitted );
 
   console.log( 'is admin ==>', isAdmin );
 
-  console.log( 'is user request ==>', requestId, request.users[0], isUserRequest );
+  console.log( 'is user request ==>', requestId, request.users[0], isRequester );
 
-  if ( ! isAdmin && ( ! isUserRequest || numberOfRequestsSubmitted > 1 ) ) return res.status( 403 ).send( 'Forbidden Action' );
+  if ( ( ! isAdmin && ! isRequester ) || ( ! isAdmin && isRequester && numberOfRequestsSubmitted > 1 ) ) return res.status( 403 ).send( 'Forbidden Action' );
 
   const updateRequestOutcome = await RequestModel.findByIdAndUpdate(
 
@@ -91,7 +91,7 @@ const updateRequest = async ( req, res ) => {
 
   console.log( updateRequestOutcome );
 
-  res.status( 200 ).send( 'request updated successfully' );
+  res.status( 200 ).end();
 
 }
 
@@ -105,17 +105,19 @@ const deleteRequest = async ( req, res ) => {
 
   const numberOfRequestsSubmitted = request.users.length;
 
+  console.log(req?.user, 'USER REQUEST');
+
   const isAdmin = req.user.admin;
 
-  const isUserRequest = userId.equals( request.users[ 0 ] );
+  const isRequester = userId.equals( request.users[ 0 ] );
 
   console.log( 'requests submitted ==>', numberOfRequestsSubmitted );
 
   console.log( 'is admin ==>', isAdmin );
 
-  console.log( 'is user request ==>', requestId, request.users[0], isUserRequest );
+  console.log( 'is user request ==>', requestId, request.users[0], isRequester );
 
-  if ( ! isAdmin && ( ! isUserRequest || numberOfRequestsSubmitted > 1 ) ) return res.status( 403 ).send( 'Forbidden Action' );
+  if ( ( ! isAdmin && ! isRequester ) || ( ! isAdmin && isRequester && numberOfRequestsSubmitted > 1 ) ) return res.status( 403 ).send( 'Forbidden Action' );
 
   const deleteRequestOutcome = await RequestModel.deleteOne( { 
     
@@ -125,7 +127,7 @@ const deleteRequest = async ( req, res ) => {
 
   console.log( deleteRequestOutcome );
 
-  res.status( 200 ).send( `request ${ requestId } deleted successfully` );
+  res.status( 200 ).end();
 
 }
 

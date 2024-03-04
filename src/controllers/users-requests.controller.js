@@ -13,15 +13,35 @@ const addUserRequest = async ( req, res ) => {
 
   const isUserRequest = request.users.includes( userId );
 
-  if ( isUserRequest ) return res.status( 400 ).send( `User ${ userId } already requested` );
+  const isRequester = request.users[ 0 ] === userId;
 
-  const updateRequestOutcome = await RequestModel.findByIdAndUpdate(
+  if ( isRequester ) return res.status( 403 ).send( 'Forbidden Action - Not authorized to like/dislike your own request.' );
 
-    requestId,
+  let updateRequestOutcome;
 
-    { $push: { users: userId } }
+  let action;
 
-  );
+  if ( isUserRequest ) {
+
+    updateRequestOutcome = await RequestModel.findByIdAndUpdate(
+
+      requestId,
+
+      { $pull: { users: userId } }
+
+    );
+    
+  } else {
+    
+    updateRequestOutcome = await RequestModel.findByIdAndUpdate(
+
+      requestId,
+
+      { $push: { users: userId } }
+
+    ); 
+
+  }
 
   console.log( updateRequestOutcome );
 
@@ -29,6 +49,7 @@ const addUserRequest = async ( req, res ) => {
 
 }
 
+// REMOVE THIS ROUTE
 const removeUserRequest = async ( req, res ) => {
 
   const userId = new mongoose.Types.ObjectId( req.params.userId );
