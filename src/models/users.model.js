@@ -65,7 +65,11 @@ const UserSchema = new mongoose.Schema( {
 
     trim: true,
     
-    required: () => ! this.googleId && ! this.facebookId,
+    required: function() {
+
+      return ! this.googleId && ! this.facebookId;
+
+    },
     
     // validate: {
 

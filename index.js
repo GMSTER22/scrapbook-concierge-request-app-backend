@@ -27,6 +27,8 @@ const RequestModel = require( './src/models/requests.model' );
 
 const config = require( './src/config/index' );
 
+const { localLogin, localSignup, googleAuthentication, facebookAuthentication } = require( './src/config/passport-strategies' );
+
 
 
 
@@ -130,9 +132,13 @@ const app = express();
   
 // ) );
 
-passport.use( 'local-login', require( './src/config/passport-strategies' ).localLoginStrategy );
+passport.use( 'local-login', localLogin );
 
-passport.use( 'local-signup', require( './src/config/passport-strategies' ).localSignupStrategy );
+passport.use( 'local-signup', localSignup );
+
+passport.use( googleAuthentication );
+
+passport.use( facebookAuthentication );
 
 passport.serializeUser( ( user, done ) =>  {
 

@@ -5,9 +5,13 @@ const UserModel = require( '../models/users.model' );
 
 const LocalStrategy = require( 'passport-local' ).Strategy;
 
+const GoogleStrategy = require( 'passport-google-oauth20' ).Strategy;
+
+const FacebookStrategy = require( 'passport-facebook' ).Strategy;
+
 const SALT_ROUNDS = 10;
 
-const localLoginStrategy = new LocalStrategy( {
+const localLogin = new LocalStrategy( {
 
     usernameField: 'email',
 
@@ -57,7 +61,7 @@ const localLoginStrategy = new LocalStrategy( {
 
 );
 
-const localSignupStrategy = new LocalStrategy( {
+const localSignup = new LocalStrategy( {
 
     usernameField: 'email',
 
@@ -101,10 +105,128 @@ const localSignupStrategy = new LocalStrategy( {
 
 );
 
+const googleAuthentication = new GoogleStrategy( {
+
+    clientID: process.env.GOOGLE_CLIENT_ID,
+
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    
+    callbackURL: 'http://localhost:3000/auth/google/callback'
+
+  }, 
+  
+  async ( accessToken, refreshToken, profile, done ) => {
+
+    const user = await UserModel.findOne( { googleId: profile.id } ).exec();
+
+    if ( user ) {
+
+      return done( 
+        
+        null, 
+        
+        {
+
+          id: user.id,
+    
+          username: user.username,
+
+          email: user.email,
+    
+          admin: user.admin
+    
+        } 
+      
+      );
+
+    } else {
+
+      // console.log( profile.id, profile.displayName )
+
+      const newUser = await UserModel.create( { 
+
+        googleId: profile.id,
+        
+        username: profile.name.givenName,
+        
+        email: profile.emails[ 0 ].value
+      
+      } );
+
+      return done( null, newUser );
+
+    }
+
+  }  
+  
+);
+
+const facebookAuthentication = new FacebookStrategy( {
+
+    clientID: process.env.FACEBOOK_APP_ID,
+
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    
+    callbackURL: 'http://localhost:3000/auth/facebook/callback',
+
+    profileFields: [ 'id', 'displayName', 'email' ]
+
+  }, 
+  
+  async ( accessToken, refreshToken, profile, done ) => {
+
+    const user = await UserModel.findOne( { facebookId: profile.id } ).exec();
+
+    if ( user ) {
+
+      return done( 
+        
+        null, 
+        
+        {
+
+          id: user.id,
+    
+          username: user.username,
+
+          email: user.email,
+    
+          admin: user.admin
+    
+        } 
+      
+      );
+
+    } else {
+
+      // console.log( profile.id, profile.displayName )
+
+      const newUser = await UserModel.create( { 
+
+        facebookId: profile.id,
+        
+        username: profile.displayName,
+        
+        email: profile.email
+      
+      } );
+
+      return done( null, newUser );
+
+    }
+
+  }  
+  
+);
+
 module.exports = {
 
-  localLoginStrategy,
+  localLogin,
 
-  localSignupStrategy,
+  localSignup,
+
+  googleAuthentication,
+
+  facebookAuthentication
 
 }

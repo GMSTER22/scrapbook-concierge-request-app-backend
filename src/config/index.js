@@ -23,8 +23,8 @@ module.exports = {
 
   bcryptSaltRounds,
 
-  // passportLocalLoginStrategy: passportStrategies.localLoginStrategy,
+  // passportlocalLogin: passportStrategies.localLogin,
 
-  // passportSignupLoginStrategy: passportStrategies.localSignupStrategy
+  // passportSignupLoginStrategy: passportStrategies.localSignup
 
 }

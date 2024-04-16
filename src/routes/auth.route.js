@@ -73,6 +73,52 @@ router.post( '/signup/password', passport.authenticate( 'local-signup', { failur
 
 } );
 
+// Google Authentication
+router.get( '/auth/google', passport.authenticate( 'google', { scope: [ 'profile', 'email' ] } ) );
+
+router.get( '/auth/google/callback', passport.authenticate( 'google', { failureRedirect: '/authentication-failed' } ), authenticateThroughSocial );
+
+// Facebook Authentication
+router.get( '/auth/facebook', passport.authenticate( 'facebook', { authType: 'reauthenticate', scope: [ 'user_friends', 'manage_pages' ] } ) );
+
+router.get( '/auth/facebook/callback', passport.authenticate( 'facebook', { failureRedirect: '/authentication-failed' } ), authenticateThroughSocial );
+
+function authenticateThroughSocial ( req, res ) {
+
+  const cookieValue = {
+    
+    ...req.user,
+
+    id: req.user.id.valueOf()
+
+  }
+
+  console.log( 'success auth', cookieValue, typeof cookieValue );
+
+  res
+
+    .status( 200 )
+
+    .cookie( 'scr-user', JSON.stringify( cookieValue ), {
+
+      // domain: 'localhost',
+
+      // path: '/',
+      
+      expires: new Date( Date.now() + 30 * 60 * 1000 ),
+
+      // maxAge: 10 * 1000,
+      
+      httpOnly: false
+    
+    } )
+    
+    .redirect( 'http://localhost:1234' );
+
+  console.log( 'success auth', req.user );
+
+};
+
 // router.get( '/authentication-success', ( req, res ) => {
 
 //   res.cookie( 'user', req.user, { 
