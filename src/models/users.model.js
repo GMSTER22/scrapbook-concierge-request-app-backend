@@ -99,7 +99,7 @@ const UserSchema = new mongoose.Schema( {
 
     type: String,
 
-    unique: true,
+    // unique: true,
 
     sparse: true,
 
@@ -111,7 +111,7 @@ const UserSchema = new mongoose.Schema( {
 
     type: String,
 
-    unique: true,
+    // unique: true,
 
     sparse: true,
 

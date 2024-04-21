@@ -19,8 +19,6 @@ router.patch( '/', ( req, res ) => {
 
 } );
 
-
-
 router.delete( '/', ( req, res ) => {
 
   res.status( 200 ).send( 'Deleted User' );

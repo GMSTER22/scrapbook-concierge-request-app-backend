@@ -199,8 +199,6 @@ const facebookAuthentication = new FacebookStrategy( {
 
     } else {
 
-      // console.log( profile.id, profile.displayName )
-
       const newUser = await UserModel.create( { 
 
         facebookId: profile.id,
