@@ -7,7 +7,7 @@ const RequestSchema = new mongoose.Schema( {
 
     type: Date,
 
-    default: Date.now
+    default: Date.now()
 
   },
 
@@ -30,6 +30,30 @@ const RequestSchema = new mongoose.Schema( {
     trim: true,
 
     required: true
+
+  },
+
+  url: {
+
+    type: String,
+
+    default: null
+
+  },
+
+  released: {
+
+    type: Boolean,
+
+    default: false
+
+  },
+
+  releaseDate: {
+
+    type: Date,
+
+    default: null
 
   },
 

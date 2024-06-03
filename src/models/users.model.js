@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema( {
 
     type: Date,
 
-    default: Date.now
+    default: Date.now()
 
   },
 
@@ -116,6 +116,14 @@ const UserSchema = new mongoose.Schema( {
     sparse: true,
 
     default: null
+
+  },
+
+  emailOptIn: {
+
+    type: Boolean,
+
+    default: true
 
   },
 

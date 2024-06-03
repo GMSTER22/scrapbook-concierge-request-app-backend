@@ -45,7 +45,8 @@ const createRequest = async ( req, res ) => {
 
   console.log( request );
 
-  res.status( 201 ).json( request );
+  // res.status( 201 ).json( request );
+  res.status( 201 ).send( 'Request created' );
 
 }
 // http://localhost:3000/requests/65b1ce63b1f4f9aff918b21b/users/657bb93ad76068effafd9f97%20%7D
@@ -53,7 +54,7 @@ const updateRequest = async ( req, res ) => {
 
   // const userId = req.user.id;
   
-  const requestTitle = req.body.title;
+  // const requestTitle = req.body.title;
   
   const requestId = new mongoose.Types.ObjectId( req.params.requestId );
 
@@ -67,13 +68,15 @@ const updateRequest = async ( req, res ) => {
 
   const isRequester = userId.equals( request.users[ 0 ] );
 
-  console.log( 'requests submitted ==>', numberOfRequestsSubmitted );
+  // console.log( 'requests submitted ==>', numberOfRequestsSubmitted );
 
-  console.log( 'is admin ==>', isAdmin );
+  // console.log( 'is admin ==>', isAdmin );
 
-  console.log( 'is user request ==>', requestId, request.users[0], isRequester );
+  // console.log( 'is user request ==>', requestId, request.users[0], isRequester );
 
   if ( ( ! isAdmin && ! isRequester ) || ( ! isAdmin && isRequester && numberOfRequestsSubmitted > 1 ) ) return res.status( 403 ).send( 'Forbidden Action' );
+
+  console.log( req.body.title, req.body.url, req.body.released, 'CHECKINNNNNNG' );
 
   const updateRequestOutcome = await RequestModel.findByIdAndUpdate(
 
@@ -83,9 +86,17 @@ const updateRequest = async ( req, res ) => {
 
       updatedAt: new Date().toISOString(),
       
-      title: requestTitle
+      title: req.body.title,
+
+      url: req.body.url,
+
+      released: req.body.released,
+
+      releaseDate: req.body.released && new Date().toISOString()
     
-    }
+    },
+
+    { new: true }
 
   );
 
@@ -111,11 +122,11 @@ const deleteRequest = async ( req, res ) => {
 
   const isRequester = userId.equals( request.users[ 0 ] );
 
-  console.log( 'requests submitted ==>', numberOfRequestsSubmitted );
+  // console.log( 'requests submitted ==>', numberOfRequestsSubmitted );
 
-  console.log( 'is admin ==>', isAdmin );
+  // console.log( 'is admin ==>', isAdmin );
 
-  console.log( 'is user request ==>', requestId, request.users[0], isRequester );
+  // console.log( 'is user request ==>', requestId, request.users[0], isRequester );
 
   if ( ( ! isAdmin && ! isRequester ) || ( ! isAdmin && isRequester && numberOfRequestsSubmitted > 1 ) ) return res.status( 403 ).send( 'Forbidden Action' );
 

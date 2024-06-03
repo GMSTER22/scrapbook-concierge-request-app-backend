@@ -51,7 +51,7 @@ router.post( '/login', passport.authenticate( 'local-login', { session: true, fa
 
       // path: '/',
       
-      expires: new Date( Date.now() + 30 * 60 * 1000 ),
+      expires: new Date( Date.now() + 120 * 60 * 1000 ),
 
       // maxAge: 10 * 1000,
       

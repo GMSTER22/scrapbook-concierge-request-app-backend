@@ -64,6 +64,60 @@ async function sendPasswordRecoveryEmail( userId, email, name, resetToken ) {
 
 }
 
+async function sendEmailsToUsers( users ) {
+
+  const emailPromises = users.map( ( { username, email, requests } ) => {
+
+    transporter.sendMail( {
+
+      from: '"Maddison Foo Koch 👻" <maddison53@ethereal.email>', // sender address
+
+      to: email, // list of receivers
+
+      subject: 'New Scrapbook(s) Released', // Subject line
+
+      //text: '', // plain text body
+
+      html: `
+
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+
+          </style>
+        </head>
+        <body>
+          <table>
+            <tr>
+              <td style="width:600px;max-width:600px;">
+                <p>Hi ${ username },</p>
+                <p>We are happy to announce that some of the scrapbooks you've been waiting for are now released:</p>
+                <ul>
+                  ${ requests.map( ( { title, url } ) => {
+
+                    `<li><a href="${url}">${title}</a></li>`
+
+                  } ) }
+                </ul>
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
+
+      ` // html body
+
+    } );
+
+  } )
+
+  const result = await Promise.all( emailPromises );
+
+  console.log( result, "emails outcome" );
+
+}
+
 // main().catch( console.error );
 
-module.exports = { sendPasswordRecoveryEmail };
+module.exports = { sendPasswordRecoveryEmail, sendEmailsToUsers };

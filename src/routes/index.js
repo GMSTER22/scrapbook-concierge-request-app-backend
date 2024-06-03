@@ -13,6 +13,8 @@ const usersRequestsRouter = require( './users-requests.route' );
 
 const passwordResetRouter = require( './password-reset.route' );
 
+const notificationsRouter = require( './notifications.route' );
+
 router.get( '/', ( req, res ) => {
 
   res.status( 200 ).send( 'Hello World' );
@@ -30,5 +32,7 @@ router.use( '/requests', requestsRouter );
 router.use( '/user-requests', usersRequestsRouter );
 
 router.use( '/password-reset', passwordResetRouter );
+
+router.use( '/notifications', notificationsRouter );
 
 module.exports = router;
