@@ -155,7 +155,7 @@ passport.deserializeUser( ( user, done ) => {
 
 app.use( cors( {
 
-  origin: 'https://wwww.scrapbookconciergerequests.com ',
+  origin: 'https://www.scrapbookconciergerequests.com',
 
   credentials: true
 
