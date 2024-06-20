@@ -1,10 +1,10 @@
 
 const router = require( 'express' ).Router();
 
-const { addUserRequest, removeUserRequest } = require( '../controllers/users-requests.controller' );
+const { updateUserRequest, removeUserRequest } = require( '../controllers/users-requests.controller' );
 
-router.patch( '/:requestId/users/:userId', addUserRequest );
+router.patch( '/:requestId/users/:userId', updateUserRequest );
 
-router.delete( '/:requestId/users/:userId', removeUserRequest );
+// router.delete( '/:requestId/users/:userId', removeUserRequest );
 
 module.exports = router;

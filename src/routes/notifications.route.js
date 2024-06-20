@@ -1,16 +1,10 @@
 
 const router = require( 'express' ).Router();
 
-const { notifyUsers } = require( '../controllers/notifications.controller' );
+const { notifyUsers, manageSubscriptions } = require( '../controllers/notifications.controller' );
 
-// router.get( '/:id', getSingleRequest );
+router.post( '/', notifyUsers );
 
-// router.get( '/', getAllRequests );
-
-router.post( '/notify-users', notifyUsers );
-
-// router.patch( '/:requestId/users/:userId', updateRequest );
-
-// router.delete( '/:requestId/users/:userId', deleteRequest );
+router.patch( '/subscriptions', manageSubscriptions );
 
 module.exports = router;

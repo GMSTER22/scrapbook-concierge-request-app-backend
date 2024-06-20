@@ -3,25 +3,183 @@ const mongoose = require( 'mongoose' );
 
 const RequestModel = require( '../models/requests.model' );
 
-const getAllRequests = async ( req, res ) => {
-
-  const requests = await RequestModel.find( {} );
-
-  res.status( 200 ).send( requests );
-
-  console.log( 'get all requests attempt' );
-
+const getSingleRequest = async ( req, res ) => {
+  
+  const requestId = req.params.id;
+  
+  const request = await RequestModel.findById( requestId );
+  
+  console.log( request );
+  
+  res.status( 200 ).send( request );
+  
 }
 
-const getSingleRequest = async ( req, res ) => {
+// const getUserRequests = async ( req, res ) => {
 
-  const requestId = req.params.id;
+//   const userId = new mongoose.Types.ObjectId( req.params.userId );
 
-  const request = await RequestModel.findById( requestId );
+//   const page = parseInt( req.query.page ) || 1;
 
-  console.log( request );
+//   const limit = parseInt( req.query.limit ) || 15;
 
-  res.status( 200 ).send( request );
+//   const startIndex = ( page - 1 ) * limit;
+
+//   const total = await RequestModel.countDocuments( {
+
+//     'users.0': new mongoose.Types.ObjectId( userId )
+
+//   } );
+
+//   console.log( "total numbers of the user requests => ", total );
+
+//   const requests = await RequestModel
+  
+//     .find( {
+
+//       'users.0': new mongoose.Types.ObjectId( userId )
+
+//     } )
+
+//     .skip( startIndex )
+    
+//     .limit( limit );
+
+//   res
+  
+//     .status( 200 )
+    
+//     .json( {
+
+//       requests,
+
+//       page,
+
+//       limit,
+
+//       total: Math.ceil( total / limit )
+
+//     } );
+
+// }
+
+// const getReleasedRequests = async ( req, res ) => {
+
+//   // const userId = new mongoose.Types.ObjectId( req.params.userId );
+
+//   const page = parseInt( req.query.page ) || 1;
+
+//   const limit = parseInt( req.query.limit ) || 15;
+
+//   const startIndex = ( page - 1 ) * limit;
+
+//   const total = await RequestModel.countDocuments( {
+
+//     released: true
+
+//   } );
+
+//   console.log( "total numbers of the released requests => ", total );
+
+//   const requests = await RequestModel
+  
+//     .find( {
+
+//       released: true
+
+//     } )
+
+//     .skip( startIndex )
+    
+//     .limit( limit );
+
+//   res
+  
+//     .status( 200 )
+    
+//     .json( {
+
+//       requests,
+
+//       page,
+
+//       limit,
+
+//       total: Math.ceil( total / limit )
+
+//     } );
+
+// }
+
+const getRequests = async ( req, res ) => {
+
+  let total;
+
+  let requests;
+
+  const page = parseInt( req.query.page ) || 1;
+
+  const limit = parseInt( req.query.limit ) || 15;
+
+  const startIndex = ( page - 1 ) * limit;
+
+  const released = req.query.released;
+
+  const userId = req.query.id;
+
+  if ( released ) {
+
+    total = await RequestModel.countDocuments( {
+
+      released: released
+
+    } );
+
+    requests = await RequestModel.find( { released } ).skip( startIndex ).limit( limit );
+    
+  } else if ( userId ) {
+
+    total = await RequestModel.countDocuments( {
+
+      'users.0': new mongoose.Types.ObjectId( userId )
+  
+    } );
+  
+    requests = await RequestModel
+    
+      .find( {
+  
+        'users.0': new mongoose.Types.ObjectId( userId )
+  
+      } )
+  
+      .skip( startIndex )
+      
+      .limit( limit );
+
+  } else {
+    
+    total = await RequestModel.estimatedDocumentCount();
+
+    requests = await RequestModel.find().skip( startIndex ).limit( limit );
+
+  }
+
+  res
+  
+    .status( 200 )
+    
+    .json( {
+
+      requests,
+
+      page,
+
+      limit,
+
+      total: Math.ceil( total / limit )
+
+    } );
 
 }
 
@@ -43,18 +201,12 @@ const createRequest = async ( req, res ) => {
 
   } );
 
-  console.log( request );
-
-  // res.status( 201 ).json( request );
   res.status( 201 ).send( 'Request created' );
 
 }
+
 // http://localhost:3000/requests/65b1ce63b1f4f9aff918b21b/users/657bb93ad76068effafd9f97%20%7D
 const updateRequest = async ( req, res ) => {
-
-  // const userId = req.user.id;
-  
-  // const requestTitle = req.body.title;
   
   const requestId = new mongoose.Types.ObjectId( req.params.requestId );
 
@@ -100,7 +252,7 @@ const updateRequest = async ( req, res ) => {
 
   );
 
-  console.log( updateRequestOutcome );
+  // console.log( updateRequestOutcome );
 
   res.status( 200 ).end();
 
@@ -136,7 +288,7 @@ const deleteRequest = async ( req, res ) => {
   
   } );
 
-  console.log( deleteRequestOutcome );
+  // console.log( deleteRequestOutcome );
 
   res.status( 200 ).end();
 
@@ -145,8 +297,12 @@ const deleteRequest = async ( req, res ) => {
 module.exports = {
 
   getSingleRequest,
+
+  // getUserRequests,
+
+  // getReleasedRequests,
   
-  getAllRequests,
+  getRequests,
 
   createRequest,
 

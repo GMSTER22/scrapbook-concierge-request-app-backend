@@ -3,9 +3,9 @@ const mongoose = require( 'mongoose' );
 
 const RequestModel = require( '../models/requests.model' );
 
-const { sendEmailToUsers } = require( '../services/sendEmail.service' );
+const UserModel = require( '../models/users.model' );
 
-// const RequestModel = require( '../models/requests.model' );
+const { sendEmailToUsers } = require( '../services/sendEmail.service' );
 
 const notifyUsers = async ( req, res ) => {
 
@@ -85,4 +85,16 @@ const notifyUsers = async ( req, res ) => {
 
 }
 
-module.exports = { notifyUsers }
+const manageSubscriptions = async ( req, res ) => {
+
+  const { email, emailOptIn } = req.body;
+
+  const user = await UserModel.findOneAndUpdate( { email }, { emailOptIn }, { returnDocument: 'after' } );
+
+  console.log( req.body, user );
+
+  res.status( 201 ).json( { emailOptIn } );
+
+}
+
+module.exports = { notifyUsers, manageSubscriptions };

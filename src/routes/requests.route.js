@@ -1,11 +1,11 @@
 
 const router = require( 'express' ).Router();
 
-const { getSingleRequest, getAllRequests, createRequest, updateRequest, deleteRequest } = require( '../controllers/requests.controller' );
+const { getSingleRequest, getRequests, createRequest, updateRequest, deleteRequest } = require( '../controllers/requests.controller' );
 
 router.get( '/:id', getSingleRequest );
 
-router.get( '/', getAllRequests );
+router.get( '/', getRequests );
 
 router.post( '/:id', createRequest );
 

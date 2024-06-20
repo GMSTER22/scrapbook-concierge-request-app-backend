@@ -5,9 +5,9 @@ const transporter = nodemailer.createTransport( {
 
   host: process.env.EMAIL_HOST, // 'smtp.ethereal.email'
 
-  port: 2525,
+  port: 587,
 
-  //secure: false, // Use `true` for port 465, `false` for all other ports
+  secure: false, // Use `true` for port 465, `false` for all other ports
 
   auth: {
 
@@ -24,7 +24,7 @@ async function sendPasswordRecoveryEmail( userId, email, name, resetToken ) {
   // send mail with defined transport object
   const info = await transporter.sendMail( {
 
-    from: '"Maddison Foo Koch 👻" <maddison53@ethereal.email>', // sender address
+    from: `"SCR 👻" <${process.env.EMAIL}>`, // sender address
 
     to: email, // list of receivers
 
@@ -70,11 +70,11 @@ async function sendEmailsToUsers( users ) {
 
     transporter.sendMail( {
 
-      from: '"Maddison Foo Koch 👻" <maddison53@ethereal.email>', // sender address
+      from: `"SCR 👻" <${process.env.EMAIL}>`, // sender address
 
       to: email, // list of receivers
 
-      subject: 'New Scrapbook(s) Released', // Subject line
+      subject: 'New Scrapbook Kits Released', // Subject line
 
       //text: '', // plain text body
 
@@ -114,10 +114,8 @@ async function sendEmailsToUsers( users ) {
 
   const result = await Promise.all( emailPromises );
 
-  console.log( result, "emails outcome" );
+  console.log( result, "emails outcomes" );
 
 }
-
-// main().catch( console.error );
 
 module.exports = { sendPasswordRecoveryEmail, sendEmailsToUsers };

@@ -3,7 +3,7 @@ const mongoose = require( 'mongoose' );
 
 const RequestModel = require( '../models/requests.model' );
 
-const addUserRequest = async ( req, res ) => {
+const updateUserRequest = async ( req, res ) => {
 
   const userId = new mongoose.Types.ObjectId( req.params.userId );
   
@@ -19,7 +19,7 @@ const addUserRequest = async ( req, res ) => {
 
   let updateRequestOutcome;
 
-  let action;
+  // let action;
 
   if ( isUserRequest ) {
 
@@ -43,43 +43,43 @@ const addUserRequest = async ( req, res ) => {
 
   }
 
-  console.log( updateRequestOutcome );
+  console.log( updateRequestOutcome, "update request outcome" );
 
   res.status( 200 ).send( `user ${ userId } request updated successfully` );
 
 }
 
 // REMOVE THIS ROUTE
-const removeUserRequest = async ( req, res ) => {
+// const removeUserRequest = async ( req, res ) => {
 
-  const userId = new mongoose.Types.ObjectId( req.params.userId );
+//   const userId = new mongoose.Types.ObjectId( req.params.userId );
   
-  const requestId = new mongoose.Types.ObjectId( req.params.requestId );
+//   const requestId = new mongoose.Types.ObjectId( req.params.requestId );
 
-  const request = await RequestModel.findById( requestId );
+//   const request = await RequestModel.findById( requestId );
 
-  const isUserRequest = request.users.includes( userId );
+//   const isUserRequest = request.users.includes( userId );
 
-  if ( ! isUserRequest ) return res.status( 400 ).send( `No request from user ${ userId }` );
+//   if ( ! isUserRequest ) return res.status( 400 ).send( `No request from user ${ userId }` );
 
-  const updateRequestOutcome = await RequestModel.findByIdAndUpdate(
+//   const updateRequestOutcome = await RequestModel.findByIdAndUpdate(
 
-    requestId,
+//     requestId,
 
-    { $pull: { users: { $eq: userId } } }
+//     { $pull: { users: { $eq: userId } } }
 
-  );
+//   );
 
-  console.log( updateRequestOutcome );
+//   console.log( updateRequestOutcome );
 
-  res.status( 200 ).send( `user ${ userId } request removed successfully` );
+//   res.status( 200 ).send( `user ${ userId } request removed successfully` );
 
-}
+// }
 
 module.exports = {
 
-  addUserRequest,
+  updateUserRequest,
 
-  removeUserRequest
+  // removeUserRequest
 
 }
