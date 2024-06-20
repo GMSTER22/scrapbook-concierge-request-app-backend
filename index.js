@@ -29,12 +29,9 @@ const config = require( './src/config/index' );
 
 const { localLogin, localSignup, googleAuthentication, facebookAuthentication } = require( './src/config/passport-strategies' );
 
+// const SALT_ROUNDS = config.bcryptSaltRounds;
 
-
-
-const SALT_ROUNDS = config.bcryptSaltRounds;
-
-const PORT = config.PORT || 5000;
+// const PORT = config.PORT || 5000;
 
 const app = express();
 
@@ -158,7 +155,7 @@ passport.deserializeUser( ( user, done ) => {
 
 app.use( cors( {
 
-  origin: 'http://localhost:1234',
+  origin: 'https://wwww.scrapbookconciergerequests.com ',
 
   credentials: true
 
