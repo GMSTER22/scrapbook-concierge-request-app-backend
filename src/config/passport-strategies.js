@@ -1,4 +1,6 @@
 
+const config = require( '../config/index' );
+
 const bcrypt = require( 'bcrypt' );
 
 const UserModel = require( '../models/users.model' );
@@ -29,17 +31,11 @@ const localLogin = new LocalStrategy( {
 
     const user = await UserModel.findOne( { email: sanitizedEmail } ).exec();
 
-    console.log( user, 'USER DATA' );
-
-    console.log( password, user?.password, 'CHECKING PASSWORD' );
-
     if ( ! user ) return done( null, false );
 
     bcrypt.compare( sanitizedPassword, user?.password, ( err, result ) => {
 
       if ( err ) return done( null, false );
-
-      console.log( result, 'comp. result' );
 
       if ( result ) done( null, {
 
@@ -52,8 +48,6 @@ const localLogin = new LocalStrategy( {
       } );
 
       else done( null, false );
-      
-      console.log( 'strategy login ===>', result );
 
     } );
 
@@ -111,7 +105,7 @@ const googleAuthentication = new GoogleStrategy( {
 
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     
-    callbackURL: 'http://localhost:3000/auth/google/callback'
+    callbackURL: `${ config.SERVER_URL }/auth/google/callback`
 
   }, 
   
@@ -141,8 +135,6 @@ const googleAuthentication = new GoogleStrategy( {
 
     } else {
 
-      // console.log( profile.id, profile.displayName )
-
       const newUser = await UserModel.create( { 
 
         googleId: profile.id,
@@ -167,7 +159,7 @@ const facebookAuthentication = new FacebookStrategy( {
 
     clientSecret: process.env.FACEBOOK_APP_SECRET,
     
-    callbackURL: 'http://localhost:3000/auth/facebook/callback',
+    callbackURL: `${ config.SERVER_URL }/auth/facebook/callback`,
 
     profileFields: [ 'id', 'displayName', 'email' ]
 

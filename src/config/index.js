@@ -1,9 +1,13 @@
 
 const dotenv = require( 'dotenv' );
 
-// const passportStrategies = require( './passport-strategies' );
-
 dotenv.config();
+
+const CLIENT_URL = 'https://www.scrapbookconciergerequests.com';
+// const CLIENT_URL = 'http://localhost:1234';
+
+const SERVER_URL = 'https://scrapbook-concierge-request-app-backend.onrender.com';
+// const SERVER_URL = 'http://localhost:3000';
 
 const databaseURI = process.env.MONGO_URI;
 
@@ -15,16 +19,16 @@ const PORT = process.env.PORT;
 
 module.exports = {
 
+  CLIENT_URL,
+
+  SERVER_URL,
+
   PORT,
 
   databaseURI,
 
   sessionSecretKey,
 
-  bcryptSaltRounds,
-
-  // passportlocalLogin: passportStrategies.localLogin,
-
-  // passportSignupLoginStrategy: passportStrategies.localSignup
+  bcryptSaltRounds
 
 }

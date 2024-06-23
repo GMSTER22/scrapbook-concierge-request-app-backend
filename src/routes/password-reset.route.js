@@ -49,29 +49,17 @@ router.patch( '/', async ( req, res, next ) => {
 
   const { userId, resetToken, newPassword } = req.body;
 
-  // console.log( query, 'query' );
-
   const token = await TokenModel.findOne( { userId } ).exec();
 
   if ( ! token ) return res.status( 400 ).send( 'No request have been made by user' );
 
-  console.log( resetToken, 'reset token' );
-
-  console.log( token.token, 'Token Token' );
-
   const match = await bcrypt.compare( resetToken, token?.token );
-
-  console.log( 'match', match );
 
   if ( match ) {
 
     const newPasswordHash = await bcrypt.hash( newPassword, SALT_ROUNDS );
 
-    console.log( newPasswordHash, 'new password hash' );
-
     const updatedPasswordResult = await UserModel.updateOne( { _id: userId }, { password: newPasswordHash } );
-
-    console.log( updatedPasswordResult, 'updatedPasswordResult' );
 
   }
 

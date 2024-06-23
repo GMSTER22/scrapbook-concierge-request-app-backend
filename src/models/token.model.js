@@ -27,19 +27,7 @@ const TokenSchema = new mongoose.Schema( {
 
     required: true
 
-  },
-
-  // requests: [
-
-  //   {
-
-  //     type: mongoose.Schema.Types.ObjectId,
-
-  //     ref: 'Request'
-
-  //   }
-
-  // ]
+  }
 
 } );
 

@@ -1,4 +1,4 @@
-// getting-started.js
+
 const mongoose = require( 'mongoose' );
 
 const config = require( '../config/index' );

@@ -1,6 +1,4 @@
 
-const mongoose = require( 'mongoose' );
-
 const RequestModel = require( '../models/requests.model' );
 
 const UserModel = require( '../models/users.model' );
@@ -11,8 +9,6 @@ const notifyUsers = async ( req, res ) => {
 
   const { requestIds } = req.body;
 
-  console.log( 'RequestIds', requestIds );
-
   const requests = await RequestModel
   
     .find( { 
@@ -22,8 +18,6 @@ const notifyUsers = async ( req, res ) => {
     } )
 
     .populate( 'users' );
-
-  // requests.forEach( request => console.log(request.users) );
 
   const uniqueUsersToNotify = {};
 

@@ -1,146 +1,70 @@
 
-const mongoose = require('mongoose');
-
 const router = require( 'express' ).Router();
 
 const passport = require( 'passport' );
 
-router.get( '/logout', ( req, res, next ) => {
+const { logoutUser, localLogin, localSignup, socialMediaAuthentication, authFailure } = require( '../controllers/auth.controller' );
 
-  req.logout( err => {
+router.post( 
+  
+  '/login', 
+  
+  passport.authenticate( 'local-login', { session: true, failureRedirect: '/authentication-failed' } ), 
+  
+  localLogin 
 
-    if ( err ) return next( err );
+);
 
-    res
-    
-      .status( 200 )
+router.post( 
+  
+  '/signup/password', 
+  
+  passport.authenticate( 'local-signup', { failureRedirect: '/authentication-failed' } ), 
+  
+  localSignup 
 
-      .clearCookie( 'scr-user' )
-
-      .end();
-
-  } );
-
-  console.log( 'logged out' );
-
-} );
-
-// router.post( '/login', passport.authenticate( 'local-login', { session: true, failureRedirect: '/authentication-failed' } ) );
-
-router.post( '/login', passport.authenticate( 'local-login', { session: true, failureRedirect: '/authentication-failed' } ), ( req, res ) => {
-
-  // const { id, username, admin } = req.user;
-
-  const cookieValue = {
-    
-    ...req.user,
-
-    id: req.user.id.valueOf()
-
-  }
-
-  console.log( 'success auth', cookieValue, typeof cookieValue );
-
-  res
-
-    .status( 200 )
-
-    .cookie( 'scr-user', JSON.stringify( cookieValue ), {
-
-      // domain: 'localhost',
-
-      // path: '/',
-      
-      expires: new Date( Date.now() + 120 * 60 * 1000 ),
-
-      // maxAge: 10 * 1000,
-      
-      httpOnly: false
-    
-    } )
-
-    .json( req.user );
-
-  console.log( 'success auth', req.user );
-
-} );
-
-router.post( '/signup/password', passport.authenticate( 'local-signup', { failureRedirect: '/authentication-failed' } ), ( req, res ) => {
-
-  res.status( 200 ).send( 'Signed up successfully' );
-
-  console.log( 'Has been authenticated' );
-
-} );
+);
 
 // Google Authentication
-router.get( '/auth/google', passport.authenticate( 'google', { scope: [ 'profile', 'email' ] } ) );
+router.get( 
+  
+  '/auth/google', 
+  
+  passport.authenticate( 'google', { scope: [ 'profile', 'email' ] } ) 
 
-router.get( '/auth/google/callback', passport.authenticate( 'google', { failureRedirect: '/authentication-failed' } ), authenticateThroughSocial );
+);
+
+router.get( 
+  
+  '/auth/google/callback', 
+  
+  passport.authenticate( 'google', { failureRedirect: '/authentication-failed' } ), 
+  
+  socialMediaAuthentication 
+
+);
 
 // Facebook Authentication
-router.get( '/auth/facebook', passport.authenticate( 'facebook', { authType: 'reauthenticate', scope: [ 'user_friends', 'manage_pages' ] } ) );
-
-router.get( '/auth/facebook/callback', passport.authenticate( 'facebook', { failureRedirect: '/authentication-failed' } ), authenticateThroughSocial );
-
-function authenticateThroughSocial ( req, res ) {
-
-  const cookieValue = {
-    
-    ...req.user,
-
-    id: req.user.id.valueOf()
-
-  }
-
-  console.log( 'success auth', cookieValue, typeof cookieValue );
-
-  res
-
-    .status( 200 )
-
-    .cookie( 'scr-user', JSON.stringify( cookieValue ), {
-
-      // domain: 'localhost',
-
-      // path: '/',
-      
-      expires: new Date( Date.now() + 30 * 60 * 1000 ),
-
-      // maxAge: 10 * 1000,
-      
-      httpOnly: false
-    
-    } )
-    
-    .redirect( 'http://localhost:1234' );
-
-  console.log( 'success auth', req.user );
-
-};
-
-// router.get( '/authentication-success', ( req, res ) => {
-
-//   res.cookie( 'user', req.user, { 
-    
-//     expires: new Date( Date.now() + 900000 ),
-    
-//     httpOnly: false 
+router.get( 
   
-//   } );
+  '/auth/facebook', 
   
-//   res.status( 200 ).json( req.user );
+  passport.authenticate( 'facebook', { authType: 'reauthenticate', scope: [ 'user_friends', 'manage_pages' ] } ) 
 
-//   console.log( 'success auth', req.user );
+);
 
-// } );
+router.get( 
+  
+  '/auth/facebook/callback', 
+  
+  passport.authenticate( 'facebook', { failureRedirect: '/authentication-failed' } ), 
+  
+  socialMediaAuthentication 
 
-router.get( '/authentication-failed', ( req, res ) => {
+);
 
-  res.clearCookie( 'scr-user', req.user );
+router.get( '/authentication-failed', authFailure );
 
-  res.status( 400 ).send( 'Wrong credentials' );
-
-} );
+router.get( '/logout', logoutUser );
 
 module.exports = router;

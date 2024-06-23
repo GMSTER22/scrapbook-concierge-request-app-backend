@@ -41,25 +41,27 @@ const UserSchema = new mongoose.Schema( {
 
     lowercase: true,
 
-    // validate: {
+    validate: {
 
-    //   validator: ( v ) => {
+      validator: ( v ) => {
         
-    //     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-
-    //     return emailRegex.test( v );
+        const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    
+        return emailRegex.test( v );
       
-    //   },
+      },
 
-    //   message: props => `${ props.value } is not a valid email`
+      message: props => 'Please fill a valid email address'
 
-    // }
+    }
 
   },
 
   password: {
 
     type: String,
+
+    minLength: [ 6, 'password must be at least 6 characters long' ],
 
     unique: true,
 
@@ -69,21 +71,7 @@ const UserSchema = new mongoose.Schema( {
 
       return ! this.googleId && ! this.facebookId;
 
-    },
-    
-    // validate: {
-
-    //   validator: ( v ) => {
-        
-    //     const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-
-    //     return passwordRegex.test( v );
-      
-    //   },
-
-    //   message: props => `${ props.value } is not a valid email`
-
-    // }
+    }
 
   },
 
@@ -99,8 +87,6 @@ const UserSchema = new mongoose.Schema( {
 
     type: String,
 
-    // unique: true,
-
     sparse: true,
 
     default: null
@@ -110,8 +96,6 @@ const UserSchema = new mongoose.Schema( {
   facebookId: {
 
     type: String,
-
-    // unique: true,
 
     sparse: true,
 
@@ -125,19 +109,7 @@ const UserSchema = new mongoose.Schema( {
 
     default: true
 
-  },
-
-  // requests: [
-
-  //   {
-
-  //     type: mongoose.Schema.Types.ObjectId,
-
-  //     ref: 'Request'
-
-  //   }
-
-  // ]
+  }
 
 } );
 

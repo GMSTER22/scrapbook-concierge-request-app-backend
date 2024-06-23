@@ -5,8 +5,6 @@ const ensureAuth = require( '../middleware/auth' );
 
 const authRouter = require( './auth.route' );
 
-const usersRouter = require( './users.route' );
-
 const requestsRouter = require( './requests.route' );
 
 const usersRequestsRouter = require( './users-requests.route' );
@@ -22,8 +20,6 @@ router.get( '/', ( req, res ) => {
 } );
 
 router.use( '/', authRouter );
-
-router.use( '/users', usersRouter );
 
 // router.use( '/requests', ensureAuth, requestsRouter );
 router.use( '/requests', requestsRouter );
