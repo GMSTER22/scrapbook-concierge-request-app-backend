@@ -103,7 +103,9 @@ const socialMediaAuthentication = ( req, res ) => {
 
 const authFailure = ( req, res ) => {
 
-  res.clearCookie( 'scr-user', req.user );
+  res.clearCookie( 'scr-user' );
+
+  res.clearCookie( 'scrAppSessionId' );
 
   res.status( 400 ).send( 'Wrong credentials' );
 
