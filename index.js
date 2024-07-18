@@ -93,8 +93,6 @@ app.use( '/', require( './src/routes/index' ) );
 
 app.use( ( err, req, res, next ) => {
 
-  console.log( err, 'error' );
-
   res.status( 500 ).send( 'Internal Server Error!' );
 
 } );

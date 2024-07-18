@@ -73,11 +73,13 @@ const localSignup = new LocalStrategy( {
 
     const sanitizedUsername = req.body.username.trim();
 
+    console.warn( sanitizedEmail, sanitizedPassword, sanitizedUsername, 'body' );
+
     const user = await UserModel.findOne( { email: sanitizedEmail } ).exec();
 
     if ( user ) return done( null, false );
 
-    bcrypt.hash( sanitizedPassword, SALT_ROUNDS, async ( err, hash ) => {
+    bcrypt.hash( sanitizedPassword, +SALT_ROUNDS, async ( err, hash ) => {
 
       if ( err ) return done( null, false );
 

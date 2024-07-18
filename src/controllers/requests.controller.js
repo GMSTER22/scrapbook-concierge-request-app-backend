@@ -4,196 +4,236 @@ const mongoose = require( 'mongoose' );
 const RequestModel = require( '../models/requests.model' );
 
 const getSingleRequest = async ( req, res ) => {
-  
-  const requestId = req.params.id;
-  
-  const request = await RequestModel.findById( requestId );
-  
-  res.status( 200 ).send( request );
+
+  try {
+    
+    const requestId = req.params.id;
+    
+    const request = await RequestModel.findById( requestId );
+    
+    res.status( 200 ).send( request );
+
+  } catch ( error ) {
+    
+    res.status( 500 ).send( 'Some error occurred while retrieving the request' );
+
+  }  
   
 }
 
 const getRequests = async ( req, res ) => {
 
-  let total;
+  try {
 
-  let requests;
+    let total;
 
-  const page = parseInt( req.query.page ) || 1;
+    let requests;
 
-  const limit = parseInt( req.query.limit ) || 15;
+    const page = parseInt( req.query.page ) || 1;
 
-  const startIndex = ( page - 1 ) * limit;
+    const limit = parseInt( req.query.limit ) || 15;
 
-  const released = req.query.released;
+    const startIndex = ( page - 1 ) * limit;
 
-  const userId = req.query.id;
+    const released = req.query.released;
 
-  const sortBy = req.query.sort_by ?? 'users';
+    const userId = req.query.id;
 
-  const orderBy = req.query.order_by ?? 'asc';
+    const sortBy = req.query.sort_by ?? 'users';
 
-  if ( released ) {
+    const orderBy = req.query.order_by ?? 'asc';
 
-    total = await RequestModel.countDocuments( {
+    if ( released ) {
 
-      released: released
+      total = await RequestModel.countDocuments( {
 
-    } );
+        released: released
 
-    requests = await RequestModel
-    
-      .find( { released } )
+      } );
+
+      requests = await RequestModel
       
-      .skip( startIndex )
+        .find( { released } )
+        
+        .skip( startIndex )
+        
+        .limit( limit )
+
+        .sort( { [sortBy]: orderBy } );
       
-      .limit( limit )
+    } else if ( userId ) {
 
-      .sort( { [sortBy]: orderBy } );
-    
-  } else if ( userId ) {
+      total = await RequestModel.countDocuments( {
 
-    total = await RequestModel.countDocuments( {
-
-      'users.0': new mongoose.Types.ObjectId( userId )
-  
-    } );
-  
-    requests = await RequestModel
-    
-      .find( {
-  
         'users.0': new mongoose.Types.ObjectId( userId )
-  
-      } )
-  
-      .skip( startIndex )
-      
-      .limit( limit )
-
-      .sort( { [sortBy]: orderBy } );
-
-  } else {
     
-    total = await RequestModel.estimatedDocumentCount();
-
-    requests = await RequestModel
+      } );
     
-      .find()
+      requests = await RequestModel
       
-      .skip( startIndex )
+        .find( {
+    
+          'users.0': new mongoose.Types.ObjectId( userId )
+    
+        } )
+    
+        .skip( startIndex )
+        
+        .limit( limit )
+
+        .sort( { [sortBy]: orderBy } );
+
+    } else {
       
-      .limit( limit )
+      total = await RequestModel.estimatedDocumentCount();
+
+      requests = await RequestModel
       
-      .sort( { [sortBy]: orderBy } );
+        .find()
+        
+        .skip( startIndex )
+        
+        .limit( limit )
+        
+        .sort( { [sortBy]: orderBy } );
+
+    }
+
+    res
+    
+      .status( 200 )
+      
+      .json( {
+
+        requests,
+
+        page,
+
+        limit,
+
+        total: Math.ceil( total / limit )
+
+      } );
+
+  } catch ( error ) {
+
+    res.status( 500 ).send( 'Some error occurred while retrieving the requests' );
 
   }
-
-  res
-  
-    .status( 200 )
-    
-    .json( {
-
-      requests,
-
-      page,
-
-      limit,
-
-      total: Math.ceil( total / limit )
-
-    } );
 
 }
 
 const createRequest = async ( req, res ) => {
 
-  const userId = req.params.id;
+  try {
 
-  const requestTitle = req.body.title;
+    const userId = req.params.id;
 
-  const request = await RequestModel.create( {
+    const requestTitle = req.body.title;
 
-    title: requestTitle,
+    const request = await RequestModel.create( {
 
-    users: [ new mongoose.Types.ObjectId( userId ) ]
+      title: requestTitle,
 
-  } );
+      users: [ new mongoose.Types.ObjectId( userId ) ]
 
-  res.status( 201 ).send( 'Request created' );
+    } );
+
+    res.status( 201 ).send( 'Request created' );
+
+  } catch ( error ) {
+
+    res.status( 500 ).send( 'Some error occurred while creating the request' );
+
+  }
 
 }
 
 const updateRequest = async ( req, res ) => {
+
+  try {
   
-  const requestId = new mongoose.Types.ObjectId( req.params.requestId );
+    const requestId = new mongoose.Types.ObjectId( req.params.requestId );
 
-  const userId = new mongoose.Types.ObjectId( req.params.userId );
+    const userId = new mongoose.Types.ObjectId( req.params.userId );
 
-  const request = await RequestModel.findById( requestId );
+    const request = await RequestModel.findById( requestId );
 
-  const numberOfRequestsSubmitted = request.users.length;
+    const numberOfRequestsSubmitted = request.users.length;
 
-  const isAdmin = req.user.admin;
+    const isAdmin = req.user.admin;
 
-  const isRequester = userId.equals( request.users[ 0 ] );
+    const isRequester = userId.equals( request.users[ 0 ] );
 
-  if ( ( ! isAdmin && ! isRequester ) || ( ! isAdmin && isRequester && numberOfRequestsSubmitted > 1 ) ) return res.status( 403 ).send( 'Forbidden Action' );
+    if ( ( ! isAdmin && ! isRequester ) || ( ! isAdmin && isRequester && numberOfRequestsSubmitted > 1 ) ) return res.status( 403 ).send( 'Forbidden Action' );
 
-  const newRequest = {
+    const newRequest = {
 
-    updatedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      
+      title: req.body.title,
+
+      url: req.body.url,
+
+      released: req.body.released
     
-    title: req.body.title,
+    };
 
-    url: req.body.url,
+    if ( req.body.released === 'true' ) newRequest.releaseDate = new Date().toISOString();
 
-    released: req.body.released
-  
-  };
+    await RequestModel.findByIdAndUpdate(
 
-  if ( req.body.released === 'true' ) newRequest.releaseDate = new Date().toISOString();
+      requestId,
 
-  await RequestModel.findByIdAndUpdate(
+      newRequest,
 
-    requestId,
+      // { new: true }
 
-    newRequest,
+    );
 
-    // { new: true }
+    res.status( 200 ).end();
 
-  );
+  } catch ( error ) {
 
-  res.status( 200 ).end();
+    res.status( 500 ).send( 'Some error occurred while updating the request' );
+
+  }
 
 }
 
 const deleteRequest = async ( req, res ) => {
+
+  try {
   
-  const requestId = new mongoose.Types.ObjectId( req.params.requestId );
+    const requestId = new mongoose.Types.ObjectId( req.params.requestId );
 
-  const userId = new mongoose.Types.ObjectId( req.params.userId );
+    const userId = new mongoose.Types.ObjectId( req.params.userId );
 
-  const request = await RequestModel.findById( requestId );
+    const request = await RequestModel.findById( requestId );
 
-  const numberOfRequestsSubmitted = request.users.length;
+    const numberOfRequestsSubmitted = request.users.length;
 
-  // console.log(req?.user, 'USER REQUEST');
+    // console.log(req?.user, 'USER REQUEST');
 
-  const isAdmin = req.user.admin;
+    const isAdmin = req.user.admin;
 
-  const isRequester = userId.equals( request.users[ 0 ] );
+    const isRequester = userId.equals( request.users[ 0 ] );
 
-  if ( ( ! isAdmin && ! isRequester ) || ( ! isAdmin && isRequester && numberOfRequestsSubmitted > 1 ) ) return res.status( 403 ).send( 'Forbidden Action' );
+    if ( ( ! isAdmin && ! isRequester ) || ( ! isAdmin && isRequester && numberOfRequestsSubmitted > 1 ) ) return res.status( 403 ).send( 'Forbidden Action' );
 
-  await RequestModel.deleteOne( { 
+    await RequestModel.deleteOne( { 
+      
+      _id: requestId
     
-    _id: requestId
-  
-  } );
+    } );
 
-  res.status( 200 ).end();
+    res.status( 200 ).end();
+
+  } catch ( error ) {
+
+    res.status( 500 ).send( 'Some error occurred while deleting the request' );
+
+  }
 
 }
 

@@ -7,87 +7,103 @@ const { sendEmailToUsers } = require( '../services/sendEmail.service' );
 
 const notifyUsers = async ( req, res ) => {
 
-  const { requestIds } = req.body;
+  try {
 
-  const requests = await RequestModel
-  
-    .find( { 
+    const { requestIds } = req.body;
+
+    const requests = await RequestModel
     
-      _id: { $in: requestIds } 
-    
-    } )
+      .find( { 
+      
+        _id: { $in: requestIds } 
+      
+      } )
 
-    .populate( 'users' );
+      .populate( 'users' );
 
-  const uniqueUsersToNotify = {};
+    const uniqueUsersToNotify = {};
 
-  requests.forEach( request => {
+    requests.forEach( request => {
 
-    request.users.forEach( user => {
+      request.users.forEach( user => {
 
-      if ( uniqueUsersToNotify.hasOwnProperty( user._id ) ) {
+        if ( uniqueUsersToNotify.hasOwnProperty( user._id ) ) {
 
-        uniqueUsersToNotify[ user._id ].requests.push( {
+          uniqueUsersToNotify[ user._id ].requests.push( {
 
-          title: request.title,
+            title: request.title,
 
-          url: request.url,
+            url: request.url,
 
-          releaseDate: request.releaseDate
+            releaseDate: request.releaseDate
 
-        } );
+          } );
 
-      } else {
+        } else {
 
-        uniqueUsersToNotify[ user._id ] = {
+          uniqueUsersToNotify[ user._id ] = {
 
-          id: user._id,
+            id: user._id,
 
-          username: user.username,
+            username: user.username,
 
-          email: user.email,
+            email: user.email,
 
-          emailOptIn: user.emailOptIn,
+            emailOptIn: user.emailOptIn,
 
-          requests: [
+            requests: [
 
-            {
+              {
 
-              title: request.title,
+                title: request.title,
 
-              url: request.url,
+                url: request.url,
 
-              releaseDate: request.releaseDate
+                releaseDate: request.releaseDate
 
-            }
+              }
 
-          ]
+            ]
+
+          }
 
         }
 
-      }
+      } );
 
     } );
 
-  } );
+    await sendEmailToUsers( users.values() );
 
-  await sendEmailToUsers( users.values() );
+    // console.log( uniqueUsersToNotify, 'Unique Users To Notify' );
 
-  // console.log( uniqueUsersToNotify, 'Unique Users To Notify' );
+    res.status( 200 ).send( 'Emails Sent' );
 
-  res.status( 200 ).send( 'Emails Sent' );
+} catch ( error ) {
+
+  res.status( 500 ).send( 'Some error occurred while emailing the user' );
+
+}
 
 }
 
 const manageSubscriptions = async ( req, res ) => {
 
-  const { email, emailOptIn } = req.body;
+  try {
 
-  const user = await UserModel.findOneAndUpdate( { email }, { emailOptIn }, { returnDocument: 'after' } );
+    const { email, emailOptIn } = req.body;
 
-  // console.log( req.body, user );
+    const user = await UserModel.findOneAndUpdate( { email }, { emailOptIn }, { returnDocument: 'after' } );
 
-  res.status( 201 ).json( { emailOptIn } );
+    // console.log( req.body, user );
+
+    res.status( 201 ).json( { emailOptIn } );
+
+  } catch ( error ) {
+
+    res.status( 500 ).send( 'Some error occurred while changing the subscription status' );
+
+  }
 
 }
 
