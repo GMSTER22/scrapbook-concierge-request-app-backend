@@ -11,7 +11,7 @@ const GoogleStrategy = require( 'passport-google-oauth20' ).Strategy;
 
 const FacebookStrategy = require( 'passport-facebook' ).Strategy;
 
-const SALT_ROUNDS = 10;
+const SALT_ROUNDS = config.bcryptSaltRounds;
 
 const localLogin = new LocalStrategy( {
 
@@ -37,7 +37,7 @@ const localLogin = new LocalStrategy( {
 
       if ( err ) return done( null, false );
 
-      if ( result ) done( null, {
+      if ( result ) return done( null, {
 
         id: user._id,
 
@@ -47,7 +47,7 @@ const localLogin = new LocalStrategy( {
 
       } );
 
-      else done( null, false );
+      else return done( null, user );
 
     } );
 
@@ -79,7 +79,7 @@ const localSignup = new LocalStrategy( {
 
     bcrypt.hash( sanitizedPassword, SALT_ROUNDS, async ( err, hash ) => {
 
-      if ( err ) done( null, false );
+      if ( err ) return done( null, false );
 
       const newUser = await UserModel.create( { 
         
@@ -121,7 +121,7 @@ const googleAuthentication = new GoogleStrategy( {
         
         {
 
-          id: user.id,
+          id: user._id,
     
           username: user.username,
 
@@ -161,7 +161,7 @@ const facebookAuthentication = new FacebookStrategy( {
     
     callbackURL: `${ config.SERVER_URL }/auth/facebook/callback`,
 
-    profileFields: [ 'id', 'displayName', 'email' ]
+    profileFields: [ 'id', 'displayName', 'emails' ]
 
   }, 
   
@@ -177,7 +177,7 @@ const facebookAuthentication = new FacebookStrategy( {
         
         {
 
-          id: user.id,
+          id: user._id,
     
           username: user.username,
 
@@ -197,7 +197,7 @@ const facebookAuthentication = new FacebookStrategy( {
         
         username: profile.displayName,
         
-        email: profile.email
+        email: profile.emails[ 0 ].value
       
       } );
 

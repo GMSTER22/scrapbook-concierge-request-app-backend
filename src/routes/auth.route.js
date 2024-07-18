@@ -9,7 +9,7 @@ router.post(
   
   '/login', 
   
-  passport.authenticate( 'local-login', { session: true, failureRedirect: '/authentication-failed' } ), 
+  passport.authenticate( 'local-login', { session: false, failureRedirect: '/authentication-failed' } ), 
   
   localLogin 
 
@@ -19,7 +19,7 @@ router.post(
   
   '/signup/password', 
   
-  passport.authenticate( 'local-signup', { failureRedirect: '/authentication-failed' } ), 
+  passport.authenticate( 'local-signup', { session: false, failureRedirect: '/authentication-failed' } ), 
   
   localSignup 
 
@@ -38,18 +38,25 @@ router.get(
   
   '/auth/google/callback', 
   
-  passport.authenticate( 'google', { failureRedirect: '/authentication-failed' } ), 
+  passport.authenticate( 'google', { session: false, failureRedirect: '/authentication-failed' } ), 
   
   socialMediaAuthentication 
 
 );
 
 // Facebook Authentication
+// router.get( 
+  
+//   '/auth/facebook', 
+  
+//   passport.authenticate( 'facebook', { authType: 'reauthenticate', scope: [ 'user_friends', 'manage_pages' ] } ) 
+
+// );
 router.get( 
   
   '/auth/facebook', 
   
-  passport.authenticate( 'facebook', { authType: 'reauthenticate', scope: [ 'user_friends', 'manage_pages' ] } ) 
+  passport.authenticate( 'facebook', { scope: [ 'email' ] } ) 
 
 );
 
@@ -57,7 +64,7 @@ router.get(
   
   '/auth/facebook/callback', 
   
-  passport.authenticate( 'facebook', { failureRedirect: '/authentication-failed' } ), 
+  passport.authenticate( 'facebook', { session: false, failureRedirect: '/authentication-failed' } ), 
   
   socialMediaAuthentication 
 
@@ -65,6 +72,6 @@ router.get(
 
 router.get( '/authentication-failed', authFailure );
 
-router.get( '/logout', logoutUser );
+// router.get( '/logout', logoutUser );
 
 module.exports = router;

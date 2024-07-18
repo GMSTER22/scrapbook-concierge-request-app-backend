@@ -1,61 +1,51 @@
 
 const config = require( '../config/index' );
 
+const jwt = require( 'jsonwebtoken' );
+
 const logoutUser = ( req, res, next ) => {
 
   req.logout( err => {
 
     if ( err ) return next( err );
 
-    res
+    // res
     
-      .status( 200 )
+    //   .status( 200 )
 
-      .clearCookie( 'scr-user' )
+    //   .clearCookie( 'scr-user' )
 
-      .end();
+    //   .end();
 
   } );
-
-  console.log( 'logged out' );
 
 }
 
 const localLogin = ( req, res ) => {
 
-  const cookieValue = {
+  try {
     
-    ...req.user,
+    jwt.sign( req.user, config.privateKey, {
+        
+        algorithm: 'RS256', 
+        
+        expiresIn: 60 * 60 // Expressed in seconds
+      
+      }, ( err, token ) => {
+  
+        if ( err ) res.status( 500 ).send( 'Error generating token' );
+  
+        else res.status( 200 ).json( token );   
+  
+      } 
+    
+    );
 
-    id: req.user.id.valueOf()
+  } catch ( error ) {
+    
+    res.status( 500 ).send( 'Failed to generate Login token' );
 
   }
-
-  console.log( 'success auth', cookieValue, typeof cookieValue );
-
-  res
-
-    .status( 200 )
-
-    .cookie( 'scr-user', JSON.stringify( cookieValue ), {
-
-      // domain: 'localhost',
-
-      // path: '/',
-
-      httpOnly: true,
-
-      secure: true, // Ensures the cookie is sent only over HTTPS
-
-      sameSite: 'None', // Allows cross-site cookies
-      
-      // expires: new Date( Date.now() + 120 * 60 * 1000 ),
-
-      maxAge: 2 * 60 * 60 * 1000, // 2 hours
-    
-    } )
-
-    .json( req.user );
 
 }
 
@@ -67,45 +57,33 @@ const localSignup = ( req, res ) => {
 
 const socialMediaAuthentication = ( req, res ) => {
 
-  const cookieValue = {
+  try {
     
-    ...req.user,
+    jwt.sign( req.user, config.privateKey, {
+        
+        algorithm: 'RS256', 
+        
+        expiresIn: 60 * 60 // Expressed in seconds
+      
+      }, ( err, token ) => {
+  
+        if ( err ) res.status( 500 ).send( 'Error generating token' );
+  
+        else res.status( 200 ).redirect( `${config.CLIENT_URL}/login?token=${token}` );
+  
+      } 
+    
+    );
 
-    id: req.user.id.valueOf()
+  } catch ( error ) {
+    
+    res.status( 500 ).send( 'Failed to generate Login token' );
 
   }
-
-  res
-
-    .status( 200 )
-
-    .cookie( 'scr-user', JSON.stringify( cookieValue ), {
-
-      // domain: 'localhost',
-
-      // path: '/',
-
-      httpOnly: true,
-
-      secure: true, // Ensures the cookie is sent only over HTTPS
-
-      sameSite: 'None', // Allows cross-site cookies
-      
-      // expires: new Date( Date.now() + 120 * 60 * 1000 ),
-
-      maxAge: 2 * 60 * 60 * 1000, // 2 hours
-    
-    } )
-    
-    .redirect( config.CLIENT_URL );
 
 };
 
 const authFailure = ( req, res ) => {
-
-  res.clearCookie( 'scr-user' );
-
-  res.clearCookie( 'scrAppSessionId' );
 
   res.status( 400 ).send( 'Wrong credentials' );
 

@@ -27,8 +27,6 @@ router.post( '/', async ( req, res, next ) => {
 
   const resetTokenHash = await bcrypt.hash( resetToken, SALT_ROUNDS );
 
-  console.log( resetTokenHash, 'token hashed' );
-
   const newToken = await TokenModel.create( { 
     
     userId: user._id,
@@ -36,8 +34,6 @@ router.post( '/', async ( req, res, next ) => {
     token: resetTokenHash
   
   } );
-
-  console.log( newToken, 'new token' );
     
   await sendPasswordRecoveryEmail( user._id, user.email, user.username, resetToken );
   

@@ -25,7 +25,13 @@ const updateUserRequest = async ( req, res ) => {
 
       requestId,
 
-      { $pull: { users: userId } }
+      {
+        
+        $pull: { users: userId },
+
+        $inc: { usersLength: -1 }
+      
+      }
 
     );
     
@@ -35,7 +41,13 @@ const updateUserRequest = async ( req, res ) => {
 
       requestId,
 
-      { $push: { users: userId } }
+      {
+        
+        $push: { users: userId },
+
+        $inc: { usersLength: 1 }
+      
+      }
 
     ); 
 

@@ -73,7 +73,7 @@ const notifyUsers = async ( req, res ) => {
 
   await sendEmailToUsers( users.values() );
 
-  console.log( uniqueUsersToNotify, 'Unique Users To Notify' );
+  // console.log( uniqueUsersToNotify, 'Unique Users To Notify' );
 
   res.status( 200 ).send( 'Emails Sent' );
 
@@ -85,7 +85,7 @@ const manageSubscriptions = async ( req, res ) => {
 
   const user = await UserModel.findOneAndUpdate( { email }, { emailOptIn }, { returnDocument: 'after' } );
 
-  console.log( req.body, user );
+  // console.log( req.body, user );
 
   res.status( 201 ).json( { emailOptIn } );
 

@@ -21,14 +21,14 @@ router.get( '/', ( req, res ) => {
 
 router.use( '/', authRouter );
 
-// router.use( '/requests', ensureAuth, requestsRouter );
-router.use( '/requests', requestsRouter );
+// router.use( '/requests', requestsRouter );
+router.use( '/requests', ensureAuth, requestsRouter );
 
 // router.use( '/users-requests', ensureAuth, usersRequestsRouter );
-router.use( '/user-requests', usersRequestsRouter );
+router.use( '/user-requests', ensureAuth, usersRequestsRouter );
 
 router.use( '/password-reset', passwordResetRouter );
 
-router.use( '/notifications', notificationsRouter );
+router.use( '/notifications', ensureAuth, notificationsRouter );
 
 module.exports = router;

@@ -29,6 +29,10 @@ const getRequests = async ( req, res ) => {
 
   const userId = req.query.id;
 
+  const sortBy = req.query.sort_by ?? 'users';
+
+  const orderBy = req.query.order_by ?? 'asc';
+
   if ( released ) {
 
     total = await RequestModel.countDocuments( {
@@ -37,7 +41,15 @@ const getRequests = async ( req, res ) => {
 
     } );
 
-    requests = await RequestModel.find( { released } ).skip( startIndex ).limit( limit );
+    requests = await RequestModel
+    
+      .find( { released } )
+      
+      .skip( startIndex )
+      
+      .limit( limit )
+
+      .sort( { [sortBy]: orderBy } );
     
   } else if ( userId ) {
 
@@ -57,13 +69,23 @@ const getRequests = async ( req, res ) => {
   
       .skip( startIndex )
       
-      .limit( limit );
+      .limit( limit )
+
+      .sort( { [sortBy]: orderBy } );
 
   } else {
     
     total = await RequestModel.estimatedDocumentCount();
 
-    requests = await RequestModel.find().skip( startIndex ).limit( limit );
+    requests = await RequestModel
+    
+      .find()
+      
+      .skip( startIndex )
+      
+      .limit( limit )
+      
+      .sort( { [sortBy]: orderBy } );
 
   }
 
@@ -119,25 +141,27 @@ const updateRequest = async ( req, res ) => {
 
   if ( ( ! isAdmin && ! isRequester ) || ( ! isAdmin && isRequester && numberOfRequestsSubmitted > 1 ) ) return res.status( 403 ).send( 'Forbidden Action' );
 
+  const newRequest = {
+
+    updatedAt: new Date().toISOString(),
+    
+    title: req.body.title,
+
+    url: req.body.url,
+
+    released: req.body.released
+  
+  };
+
+  if ( req.body.released === 'true' ) newRequest.releaseDate = new Date().toISOString();
+
   await RequestModel.findByIdAndUpdate(
 
     requestId,
 
-    {
+    newRequest,
 
-      updatedAt: new Date().toISOString(),
-      
-      title: req.body.title,
-
-      url: req.body.url,
-
-      released: req.body.released,
-
-      releaseDate: req.body.released && new Date().toISOString()
-    
-    },
-
-    { new: true }
+    // { new: true }
 
   );
 
@@ -155,7 +179,7 @@ const deleteRequest = async ( req, res ) => {
 
   const numberOfRequestsSubmitted = request.users.length;
 
-  console.log(req?.user, 'USER REQUEST');
+  // console.log(req?.user, 'USER REQUEST');
 
   const isAdmin = req.user.admin;
 

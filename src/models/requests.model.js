@@ -67,7 +67,15 @@ const RequestSchema = new mongoose.Schema( {
 
     }
 
-  ]
+  ],
+
+  usersLength: {
+
+    type: Number,
+
+    default: 1
+
+  }
 
 } );
 

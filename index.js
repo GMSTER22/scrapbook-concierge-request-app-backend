@@ -9,7 +9,7 @@ const passport = require( 'passport' );
 
 const bodyParser = require('body-parser');
 
-const session = require( 'express-session' );
+// const session = require( 'express-session' );
 
 const helmet = require( 'helmet' );
 
@@ -29,21 +29,21 @@ passport.use( googleAuthentication );
 
 passport.use( facebookAuthentication );
 
-passport.serializeUser( ( user, done ) =>  {
+// passport.serializeUser( ( user, done ) =>  {
 
-  console.log( 'serialized ===>', user );
+//   console.log( 'serialized ===>', user );
 
-  done( null, user );
+//   done( null, user );
 
-} );
+// } );
 
-passport.deserializeUser( ( user, done ) => {
+// passport.deserializeUser( ( user, done ) => {
 
-  console.log( "desirialized ===> ", user );
+//   console.log( "desirialized ===> ", user );
 
-  done( null, user );
+//   done( null, user );
 
-} );
+// } );
 
 app.use( helmet() );
 
@@ -59,51 +59,41 @@ app.use( bodyParser.json() );
 
 app.use( bodyParser.urlencoded( { extended: true } ) );
 
-// app.use( cookieSession( {
+app.set( 'trust proxy', 1 ); // trust first proxy;
 
-//   name: 'scr-session',
+// app.use( session( {
 
-//   keys: [ process.env.SESSION_SECRET ],
+//   secret: process.env.SESSION_SECRET_KEY,
 
-//   maxAge: 3 * 60 * 1000 // 3 minutes
+//   resave: false,
+
+//   saveUninitialized: false,
+
+//   cookie: {
+
+//     httpOnly: process.env.ENV === 'production',
+    
+//     secure: process.env.ENV === 'production',
+
+//     sameSite: process.env.ENV === 'production' ? 'None' : false,
+
+//     maxAge: 2 * 60 * 60 * 1000
+  
+//   }
 
 // } ) );
 
-app.set( 'trust proxy', 1 ); // trust first proxy;
-
-app.use( session( {
-
-  secret: process.env.SESSION_SECRET_KEY,
-
-  name: 'scrAppSessionId',
-
-  resave: false,
-
-  saveUninitialized: false,
-
-  cookie: {
-
-    httpOnly: true,
-    
-    secure: true,
-
-    sameSite: 'None',
-
-    maxAge: 2 * 60 * 60 * 1000
-  
-  }
-
-} ) );
-
 app.use( passport.initialize() );
 
-app.use( passport.session() );
+// app.use( passport.session() );
 
 app.disable( 'x-powered-by' );
 
 app.use( '/', require( './src/routes/index' ) );
 
 app.use( ( err, req, res, next ) => {
+
+  console.log( err, 'error' );
 
   res.status( 500 ).send( 'Internal Server Error!' );
 
