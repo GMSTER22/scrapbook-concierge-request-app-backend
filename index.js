@@ -93,7 +93,15 @@ app.use( '/', require( './src/routes/index' ) );
 
 app.use( ( err, req, res, next ) => {
 
-  res.status( 500 ).send( 'Internal Server Error!' );
+  res
+  
+    .status( 500 )
+    
+    .json( {
+      
+      message: 'Internal Server Error!'
+    
+    } );
 
 } );
 
@@ -101,7 +109,7 @@ const server = http.createServer( app );
 
 mongodb.connectDb( ( error ) => {
 
-  if ( error ) console.log( 'Cannot connect to the database' );
+  if ( error ) console.log( 'Canno\'t connect to the database' );
 
   else server.listen( config.PORT, () => console.log( `server running on PORT ${ config.PORT }` ) );
 

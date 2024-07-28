@@ -33,9 +33,27 @@ const localLogin = ( req, res ) => {
       
       }, ( err, token ) => {
   
-        if ( err ) res.status( 500 ).send( 'Error generating token' );
+        if ( err ) res
+        
+          .status( 500 )
+          
+          .json( {
+            
+            message: 'An Error occurred while generating token.'
+          
+          } );
   
-        else res.status( 200 ).json( token );   
+        else res
+        
+          .status( 200 )
+          
+          .json( {
+            
+            message: 'Success',
+            
+            token
+          
+          } ); 
   
       } 
     
@@ -43,7 +61,15 @@ const localLogin = ( req, res ) => {
 
   } catch ( error ) {
     
-    res.status( 500 ).send( 'Failed to generate Login token' );
+    res
+    
+      .status( 500 )
+      
+      .json( {
+        
+        message: 'An error occurred while logging user. Try again later.'
+      
+      } );
 
   }
 
@@ -51,7 +77,15 @@ const localLogin = ( req, res ) => {
 
 const localSignup = ( req, res ) => {
 
-  res.status( 200 ).send( 'Signed up successfully' );
+  res
+  
+    .status( 200 )
+    
+    .json( {
+      
+      message: 'Signed up successfully.'
+    
+    } );
 
 }
 
@@ -67,7 +101,15 @@ const socialMediaAuthentication = ( req, res ) => {
       
       }, ( err, token ) => {
   
-        if ( err ) res.status( 500 ).send( 'Error generating token' );
+        if ( err ) res
+        
+          .status( 500 )
+          
+          .json( {
+            
+            message: 'An Error occurred while generating token.'
+          
+          } );
   
         else res.status( 200 ).redirect( `${config.CLIENT_URL}/login?token=${token}` );
   
@@ -77,7 +119,15 @@ const socialMediaAuthentication = ( req, res ) => {
 
   } catch ( error ) {
     
-    res.status( 500 ).send( 'Failed to generate Login token' );
+    res
+    
+      .status( 500 )
+      
+      .json( {
+        
+        message: 'Login failed. Try again later.'
+      
+      } );
 
   }
 
@@ -85,7 +135,17 @@ const socialMediaAuthentication = ( req, res ) => {
 
 const authFailure = ( req, res ) => {
 
-  res.status( 400 ).send( 'Wrong credentials' );
+  console.log( req.session, 'test user' )
+
+  res
+  
+    .status( 400 )
+    
+    .json( {
+      
+      message:'Wrong credentials.'
+    
+    } );
 
 }
 

@@ -11,11 +11,29 @@ const getSingleRequest = async ( req, res ) => {
     
     const request = await RequestModel.findById( requestId );
     
-    res.status( 200 ).send( request );
+    res
+    
+      .status( 200 )
+      
+      .json( {
+        
+        message: 'Success', 
+        
+        ...request
+      
+      } );
 
   } catch ( error ) {
     
-    res.status( 500 ).send( 'Some error occurred while retrieving the request' );
+    res
+    
+      .status( 500 )
+      
+      .json( {
+        
+        message: 'An Error occurred while retrieving the request.\n Try again later.'
+      
+      } );
 
   }  
   
@@ -105,6 +123,8 @@ const getRequests = async ( req, res ) => {
       
       .json( {
 
+        message: 'Success',
+
         requests,
 
         page,
@@ -117,7 +137,15 @@ const getRequests = async ( req, res ) => {
 
   } catch ( error ) {
 
-    res.status( 500 ).send( 'Some error occurred while retrieving the requests' );
+    res
+    
+      .status( 500 )
+      
+      .json( {
+        
+        message: 'An error occurred while retrieving the requests.\n Try again later.'
+      
+      } );
 
   }
 
@@ -139,11 +167,23 @@ const createRequest = async ( req, res ) => {
 
     } );
 
-    res.status( 201 ).send( 'Request created' );
+    res
+    
+      .status( 201 )
+      
+      .json( { message: 'Request created successfully.' } );
 
   } catch ( error ) {
 
-    res.status( 500 ).send( 'Some error occurred while creating the request' );
+    res
+      
+      .status( 500 )
+      
+      .json( {
+        
+        message: 'An error occurred while creating the request.\n Try again later.'
+      
+      } );
 
   }
 
@@ -159,13 +199,33 @@ const updateRequest = async ( req, res ) => {
 
     const request = await RequestModel.findById( requestId );
 
+    if ( ! request ) return res.status( 404 ).send( 'Request not found.' );
+
     const numberOfRequestsSubmitted = request.users.length;
 
     const isAdmin = req.user.admin;
 
     const isRequester = userId.equals( request.users[ 0 ] );
 
-    if ( ( ! isAdmin && ! isRequester ) || ( ! isAdmin && isRequester && numberOfRequestsSubmitted > 1 ) ) return res.status( 403 ).send( 'Forbidden Action' );
+    if ( ! isAdmin && ! isRequester )  return res
+    
+      .status( 403 )
+      
+      .json( {
+        
+        message: 'Forbidden Action - You don\'t have permission to update someone else request.'
+      
+      } );
+
+    if ( ! isAdmin && isRequester && numberOfRequestsSubmitted > 1 ) return res
+    
+      .status( 403 )
+      
+      .json( {
+        
+        message: 'Forbidden Action - You don\'t have permission to update request others already liked.'
+      
+      } );
 
     const newRequest = {
 
@@ -191,11 +251,19 @@ const updateRequest = async ( req, res ) => {
 
     );
 
-    res.status( 200 ).end();
+    res.status( 200 ).json( {
+      
+      message: 'Updated request successfully.'
+    
+    } );
 
   } catch ( error ) {
 
-    res.status( 500 ).send( 'Some error occurred while updating the request' );
+    res.status( 500 ).json( {
+      
+      message: 'An Error occurred while updating the request.\n Try again later.'
+    
+    } );
 
   }
 
@@ -211,15 +279,33 @@ const deleteRequest = async ( req, res ) => {
 
     const request = await RequestModel.findById( requestId );
 
-    const numberOfRequestsSubmitted = request.users.length;
+    if ( ! request ) return res.status( 404 ).send( 'Request not found' );
 
-    // console.log(req?.user, 'USER REQUEST');
+    const numberOfRequestsSubmitted = request.users.length;
 
     const isAdmin = req.user.admin;
 
     const isRequester = userId.equals( request.users[ 0 ] );
 
-    if ( ( ! isAdmin && ! isRequester ) || ( ! isAdmin && isRequester && numberOfRequestsSubmitted > 1 ) ) return res.status( 403 ).send( 'Forbidden Action' );
+    if ( ! isAdmin && ! isRequester )  return res
+    
+      .status( 403 )
+      
+      .json( {
+        
+        message: 'Forbidden Action - You don\'t have permission to update someone else request.'
+      
+      } );
+
+    if ( ! isAdmin && isRequester && numberOfRequestsSubmitted > 1 ) return res
+    
+      .status( 403 )
+      
+      .json( {
+        
+        message: 'Forbidden Action - You don\'t have permission to update request others already liked.'
+      
+      } );
 
     await RequestModel.deleteOne( { 
       
@@ -227,11 +313,27 @@ const deleteRequest = async ( req, res ) => {
     
     } );
 
-    res.status( 200 ).end();
+    res
+    
+      .status( 200 )
+      
+      .json( {
+
+        message: "Deleted request successfully."
+
+      } );
 
   } catch ( error ) {
 
-    res.status( 500 ).send( 'Some error occurred while deleting the request' );
+    res
+    
+      .status( 500 )
+      
+      .json( {
+        
+        message: 'An Error occurred while deleting the request.'
+      
+      } );
 
   }
 

@@ -20,7 +20,7 @@ const databaseURI = process.env.MONGO_URI;
 
 const sessionSecretKey = process.env.SESSION_SECRET_KEY;
 
-const bcryptSaltRounds = process.env.BCRYPT_SALT_ROUNDS;
+const bcryptSaltRounds = parseInt( process.env.BCRYPT_SALT_ROUNDS );
 
 const PORT = process.env.PORT;
 

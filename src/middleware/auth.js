@@ -13,7 +13,15 @@ const ensureAuth = ( req, res, next ) => {
 
     jwt.verify( token, config.publicKey, function( err, user ) {
 
-      if ( err ) res.status( 401 ).send( 'Unauthenticated' );
+      if ( err ) res
+      
+        .status( 401 )
+        
+        .json( {
+          
+          message: 'Unauthenticated.'
+        
+        } );
 
       else {
 
@@ -27,7 +35,15 @@ const ensureAuth = ( req, res, next ) => {
 
   } else {
 
-    res.status( 401 ).send( 'Unauthenticated' );
+    res
+    
+      .status( 401 )
+      
+      .json( {
+          
+        message: 'Unauthenticated.'
+      
+      } );
 
   }
 

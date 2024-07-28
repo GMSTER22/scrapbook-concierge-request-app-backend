@@ -25,31 +25,39 @@ const localLogin = new LocalStrategy( {
 
   async ( req, email, password, done ) => {
 
-    const sanitizedEmail = email.trim();
+    try {
 
-    const sanitizedPassword = password.trim();
+      const sanitizedEmail = email.trim();
 
-    const user = await UserModel.findOne( { email: sanitizedEmail } ).exec();
+      const sanitizedPassword = password.trim();
 
-    if ( ! user ) return done( null, false );
+      const user = await UserModel.findOne( { email: sanitizedEmail } ).exec();
 
-    bcrypt.compare( sanitizedPassword, user?.password, ( err, result ) => {
+      if ( ! user ) return done( null, false );
 
-      if ( err ) return done( null, false );
+      bcrypt.compare( sanitizedPassword, user?.password, ( err, result ) => {
 
-      if ( result ) return done( null, {
+        if ( err ) return done( err );
 
-        id: user._id,
+        if ( result ) return done( null, {
 
-        username: user.username,
+          id: user._id,
 
-        admin: user.admin
+          username: user.username,
+
+          admin: user.admin
+
+        } );
+
+        else return done( null, false );
 
       } );
 
-      else return done( null, user );
+    } catch ( error ) {
+     
+      return done( error );
 
-    } );
+    }
 
   }
 
@@ -67,35 +75,44 @@ const localSignup = new LocalStrategy( {
 
   async ( req, email, password, done ) => {
 
-    const sanitizedEmail = email.trim();
+    try {
 
-    const sanitizedPassword = password.trim();
+      const sanitizedEmail = email.trim();
 
-    const sanitizedUsername = req.body.username.trim();
+      const sanitizedPassword = password.trim();
 
-    console.warn( sanitizedEmail, sanitizedPassword, sanitizedUsername, 'body' );
+      const sanitizedUsername = req.body.username.trim();
 
-    const user = await UserModel.findOne( { email: sanitizedEmail } ).exec();
+      const user = await UserModel.findOne( { email: sanitizedEmail } ).exec();
 
-    if ( user ) return done( null, false );
+      if ( user ) return done( null, false );
 
-    bcrypt.hash( sanitizedPassword, +SALT_ROUNDS, async ( err, hash ) => {
+      bcrypt.hash( sanitizedPassword, SALT_ROUNDS, async ( err, hash ) => {
 
-      if ( err ) return done( null, false );
+        // if ( err ) return done( null, false );
+        if ( err ) return done( err );
 
-      const newUser = await UserModel.create( { 
+        const newUser = await UserModel.create( { 
+          
+          username: sanitizedUsername,
+          
+          email: sanitizedEmail,
+          
+          password: hash
         
-        username: sanitizedUsername,
-        
-        email: sanitizedEmail,
-        
-        password: hash
-      
+        } );
+
+        return done( null, { id: newUser._id } );
+
+        // return done( null, { id: newUser._id }, { message: `${ newUser.username } has been registered.` } );
+
       } );
 
-      return done( null, { id: newUser._id }, { message: `${ newUser.username } has been registered.` } );
+    } catch ( error ) {
+      
+      return done( error );
 
-    } );
+    }
 
   }
 
@@ -113,41 +130,49 @@ const googleAuthentication = new GoogleStrategy( {
   
   async ( accessToken, refreshToken, profile, done ) => {
 
-    const user = await UserModel.findOne( { googleId: profile.id } ).exec();
+    try {
 
-    if ( user ) {
+      const user = await UserModel.findOne( { googleId: profile.id } ).exec();
 
-      return done( 
-        
-        null, 
-        
-        {
+      if ( user ) {
 
-          id: user._id,
-    
-          username: user.username,
+        return done( 
+          
+          null, 
+          
+          {
 
-          email: user.email,
-    
-          admin: user.admin
-    
-        } 
+            id: user._id,
       
-      );
+            username: user.username,
 
-    } else {
-
-      const newUser = await UserModel.create( { 
-
-        googleId: profile.id,
-        
-        username: profile.name.givenName,
-        
-        email: profile.emails[ 0 ].value
+            email: user.email,
       
-      } );
+            admin: user.admin
+      
+          } 
+        
+        );
 
-      return done( null, newUser );
+      } else {
+
+        const newUser = await UserModel.create( { 
+
+          googleId: profile.id,
+          
+          username: profile.name.givenName,
+          
+          email: profile.emails[ 0 ].value
+        
+        } );
+
+        return done( null, newUser );
+
+      }
+
+    } catch ( error ) {
+      
+      return done( error );
 
     }
 
@@ -169,41 +194,49 @@ const facebookAuthentication = new FacebookStrategy( {
   
   async ( accessToken, refreshToken, profile, done ) => {
 
-    const user = await UserModel.findOne( { facebookId: profile.id } ).exec();
+    try {
 
-    if ( user ) {
+      const user = await UserModel.findOne( { facebookId: profile.id } ).exec();
 
-      return done( 
-        
-        null, 
-        
-        {
+      if ( user ) {
 
-          id: user._id,
-    
-          username: user.username,
+        return done( 
+          
+          null, 
+          
+          {
 
-          email: user.email,
-    
-          admin: user.admin
-    
-        } 
+            id: user._id,
       
-      );
+            username: user.username,
 
-    } else {
-
-      const newUser = await UserModel.create( { 
-
-        facebookId: profile.id,
-        
-        username: profile.displayName,
-        
-        email: profile.emails[ 0 ].value
+            email: user.email,
       
-      } );
+            admin: user.admin
+      
+          } 
+        
+        );
 
-      return done( null, newUser );
+      } else {
+
+        const newUser = await UserModel.create( { 
+
+          facebookId: profile.id,
+          
+          username: profile.displayName,
+          
+          email: profile.emails[ 0 ].value
+        
+        } );
+
+        return done( null, newUser );
+
+      }
+
+    } catch ( error ) {
+     
+      done( error );
 
     }
 

@@ -75,15 +75,29 @@ const notifyUsers = async ( req, res ) => {
 
     await sendEmailToUsers( users.values() );
 
-    // console.log( uniqueUsersToNotify, 'Unique Users To Notify' );
+    res
+    
+      .status( 200 )
+      
+      .json( {
+      
+        message: 'Emails Sent to users.'
+    
+      } );
 
-    res.status( 200 ).send( 'Emails Sent' );
+  } catch ( error ) {
 
-} catch ( error ) {
+    res
+    
+      .status( 500 )
+      
+      .json( {
+        
+        message: 'An Error occurred while emailing users.'
+      
+      } );
 
-  res.status( 500 ).send( 'Some error occurred while emailing the user' );
-
-}
+  }
 
 }
 
@@ -97,11 +111,29 @@ const manageSubscriptions = async ( req, res ) => {
 
     // console.log( req.body, user );
 
-    res.status( 201 ).json( { emailOptIn } );
+    res
+    
+      .status( 201 )
+      
+      .json( {
+        
+        message: 'Success.',
+        
+        emailOptIn
+      
+      } );
 
   } catch ( error ) {
 
-    res.status( 500 ).send( 'Some error occurred while changing the subscription status' );
+    res
+    
+      .status( 500 )
+      
+      .json( {
+        
+        message: 'An Error occurred while changing the subscription status.'
+      
+      } );
 
   }
 

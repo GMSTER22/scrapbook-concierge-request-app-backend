@@ -13,11 +13,29 @@ const updateUserRequest = async ( req, res ) => {
 
     const request = await RequestModel.findById( requestId );
 
+    if ( ! request ) return res
+    
+      .status( 404 )
+      
+      .json( {
+        
+        message: 'Request not found.'
+      
+      } );
+
     const isUserRequest = request.users.includes( userId );
 
     const isRequester = request.users[ 0 ] === userId;
 
-    if ( isRequester ) return res.status( 403 ).send( 'Forbidden Action - Not authorized to like/dislike your own request.' );
+    if ( isRequester ) return res
+    
+      .status( 403 )
+      
+      .json( {
+        
+        message: 'Forbidden Action - Not authorized to like/dislike your own request.'
+      
+      } );
 
     let updateRequestOutcome;
 
@@ -51,15 +69,31 @@ const updateUserRequest = async ( req, res ) => {
         
         }
 
-      ); 
+      );
 
     }
 
-    res.status( 200 ).send( `user ${ userId } request updated successfully` );
+    res
+    
+      .status( 200 )
+      
+      .json( {
+        
+        message: 'Success.'
+      
+      } );
 
   } catch ( error ) {
 
-    res.status( 500 ).send( 'Some error occurred while liking the request' );
+    res
+    
+      .status( 500 )
+      
+      .json( {
+        
+        message: 'An Error occurred while liking the request.'
+      
+      } );
 
   }
 

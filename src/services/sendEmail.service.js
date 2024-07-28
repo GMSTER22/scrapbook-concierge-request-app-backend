@@ -1,6 +1,8 @@
 
 const nodemailer = require( 'nodemailer' );
 
+const config = require( '../config/index' );
+
 const transporter = nodemailer.createTransport( {
 
   host: process.env.EMAIL_HOST, // 'smtp.ethereal.email'
@@ -34,26 +36,28 @@ async function sendPasswordRecoveryEmail( userId, email, name, resetToken ) {
 
     html: `
 
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
 
-        </style>
-      </head>
-      <body>
-        <table>
-          <tr>
-            <td style="width:600px;max-width:600px;">
-              <p>Hi ${ name },</p>
-              <p>You requested to reset your password.</p>
-              <p> Please, click the link below to reset your password</p>
-              <a href="http:localhost:1234/password-reset?token=${ resetToken }&id=${ userId }">Reset Password</a>
-            </td>
-          </tr>
-        </table>
-      </body>
-    </html>
+          </style>
+        </head>
+        <body>
+          <table>
+            <tr>
+              <td style="width:600px;max-width:600px;">
+                <p>Hi ${ name },</p>
+                <p>You requested to reset your password.</p>
+                <p> Please, click the link below to reset your password</p>                
+                <div>
+                  <a href="${ config.CLIENT_URL }/password-reset?token=${ resetToken }&id=${ userId }">Reset Password</a>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
 
     `, // html body
 
@@ -112,7 +116,7 @@ async function sendEmailsToUsers( users ) {
 
   } )
 
-  const result = await Promise.all( emailPromises );
+  const result = await Promise.allSettled( emailPromises );
 
   // console.log( result, "emails outcomes" );
 
