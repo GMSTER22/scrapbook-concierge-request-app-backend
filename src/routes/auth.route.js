@@ -3,11 +3,21 @@ const router = require( 'express' ).Router();
 
 const passport = require( 'passport' );
 
-const { logoutUser, localLogin, localSignup, socialMediaAuthentication, authFailure } = require( '../controllers/auth.controller' );
+const { body } = require('express-validator');
+
+const { localLogin, localSignup, socialMediaAuthentication, authFailure, logoutUser } = require( '../controllers/auth.controller' );
+
+const { validator } = require( '../middleware/validator' );
 
 router.post( 
   
   '/login', 
+
+  body( 'email' ).trim().notEmpty().isEmail().escape(), 
+
+  body( 'password' ).trim().notEmpty().isLength( { min: 6 } ).escape(), 
+
+  validator, 
   
   passport.authenticate( 'local-login', { session: false, failureRedirect: '/authentication-failed' } ), 
   
@@ -17,7 +27,13 @@ router.post(
 
 router.post( 
   
-  '/signup/password', 
+  '/signup/password',
+  
+  body( 'email' ).trim().notEmpty().isEmail().escape(), 
+
+  body( 'password' ).trim().notEmpty().isLength( { min: 6 } ).escape(), 
+
+  validator, 
   
   passport.authenticate( 'local-signup', { session: false, failureRedirect: '/authentication-failed' } ), 
   

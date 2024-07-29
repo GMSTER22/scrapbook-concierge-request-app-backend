@@ -29,7 +29,7 @@ const localLogin = ( req, res ) => {
         
         algorithm: 'RS256', 
         
-        expiresIn: 60 * 60 // Expressed in seconds
+        expiresIn: 3 * 60 * 60 // Expressed in seconds
       
       }, ( err, token ) => {
   
@@ -97,7 +97,7 @@ const socialMediaAuthentication = ( req, res ) => {
         
         algorithm: 'RS256', 
         
-        expiresIn: 60 * 60 // Expressed in seconds
+        expiresIn: 3 * 60 * 60 // Expressed in seconds
       
       }, ( err, token ) => {
   

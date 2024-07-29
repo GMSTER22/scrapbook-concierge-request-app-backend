@@ -10,6 +10,16 @@ const getSingleRequest = async ( req, res ) => {
     const requestId = req.params.id;
     
     const request = await RequestModel.findById( requestId );
+
+    if ( ! request ) return res
+    
+      .status( 404 )
+      
+      .json( {
+        
+        message: 'Request not found.'
+      
+      } );
     
     res
     
@@ -19,7 +29,7 @@ const getSingleRequest = async ( req, res ) => {
         
         message: 'Success', 
         
-        ...request
+        request
       
       } );
 
@@ -171,7 +181,13 @@ const createRequest = async ( req, res ) => {
     
       .status( 201 )
       
-      .json( { message: 'Request created successfully.' } );
+      .json( { 
+        
+        message: 'Request created successfully.',
+
+        request
+      
+      } );
 
   } catch ( error ) {
 
@@ -199,7 +215,11 @@ const updateRequest = async ( req, res ) => {
 
     const request = await RequestModel.findById( requestId );
 
-    if ( ! request ) return res.status( 404 ).send( 'Request not found.' );
+    if ( ! request ) return res
+    
+      .status( 404 )
+      
+      .send( 'Request not found.' );
 
     const numberOfRequestsSubmitted = request.users.length;
 
@@ -241,19 +261,21 @@ const updateRequest = async ( req, res ) => {
 
     if ( req.body.released === 'true' ) newRequest.releaseDate = new Date().toISOString();
 
-    await RequestModel.findByIdAndUpdate(
+    const updatedRequest = await RequestModel.findByIdAndUpdate(
 
       requestId,
 
       newRequest,
 
-      // { new: true }
+      { new: true }
 
     );
 
     res.status( 200 ).json( {
       
-      message: 'Updated request successfully.'
+      message: 'Updated request successfully.',
+
+      request: updatedRequest
     
     } );
 

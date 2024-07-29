@@ -3,13 +3,27 @@ const RequestModel = require( '../models/requests.model' );
 
 const UserModel = require( '../models/users.model' );
 
+const { matchedData } = require('express-validator');
+
 const { sendEmailToUsers } = require( '../services/sendEmail.service' );
 
 const notifyUsers = async ( req, res ) => {
 
   try {
 
-    const { requestIds } = req.body;
+    // const { requestIds } = req.body;
+
+    const { requestIds } = matchedData( req );
+
+    if ( ! requestIds?.length ) return res
+      
+        .status( 400 )
+        
+        .json( {
+        
+          message: 'No request submitted.'
+      
+        } );
 
     const requests = await RequestModel
     
@@ -87,6 +101,8 @@ const notifyUsers = async ( req, res ) => {
 
   } catch ( error ) {
 
+    console.warn( error );
+
     res
     
       .status( 500 )
@@ -106,10 +122,8 @@ const manageSubscriptions = async ( req, res ) => {
   try {
 
     const { email, emailOptIn } = req.body;
-
+    
     const user = await UserModel.findOneAndUpdate( { email }, { emailOptIn }, { returnDocument: 'after' } );
-
-    // console.log( req.body, user );
 
     res
     

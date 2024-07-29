@@ -1,16 +1,84 @@
 
 const router = require( 'express' ).Router();
 
+const { body, param, query } = require( 'express-validator' );
+
+const { validator } = require( '../middleware/validator' );
+
 const { getSingleRequest, getRequests, createRequest, updateRequest, deleteRequest } = require( '../controllers/requests.controller' );
 
-router.get( '/:id', getSingleRequest );
+router.get( 
+  
+  '/:id', 
+  
+  param( 'id' ).trim().notEmpty().escape(), 
+  
+  validator, 
+  
+  getSingleRequest 
 
-router.get( '/', getRequests );
+);
 
-router.post( '/:id', createRequest );
+router.get( 
+  
+  '/', 
+  
+  query( 'page' ).optional().trim().escape(), 
+  
+  query( 'limit' ).optional().trim().escape(), 
 
-router.patch( '/:requestId/users/:userId', updateRequest );
+  query( 'id' ).optional().trim().escape(), 
 
-router.delete( '/:requestId/users/:userId', deleteRequest );
+  query( 'released' ).optional().isBoolean().escape(), 
+
+  query( 'sort_by' ).optional().trim().escape(), 
+
+  query( 'order_by' ).optional().trim().escape(), 
+  
+  getRequests 
+
+);
+
+router.post( 
+  
+  '/:id', 
+  
+  param( 'id' ).trim().notEmpty().escape(), 
+
+  body( 'title' ).trim().notEmpty().escape(), 
+  
+  validator, 
+  
+  createRequest
+
+);
+
+router.patch( 
+  
+  '/:requestId/users/:userId', 
+  
+  param( 'requestId' ).trim().notEmpty().escape(), 
+
+  param( 'userId' ).trim().notEmpty().escape(), 
+  
+  validator, 
+  
+  updateRequest 
+
+);
+
+router.delete( 
+  
+  '/:requestId/users/:userId', 
+  
+  param( 'requestId' ).trim().notEmpty().escape(), 
+  
+  param( 'userId' ).trim().notEmpty().escape(), 
+  
+  validator, 
+  
+  deleteRequest 
+
+);
 
 module.exports = router;
