@@ -35,6 +35,8 @@ const localLogin = new LocalStrategy( {
 
       if ( ! user ) return done( null, false );
 
+      if ( user.googleId || user.facebookId ) return done( null, false );
+
       bcrypt.compare( sanitizedPassword, user?.password, ( err, result ) => {
 
         if ( err ) return done( err );
@@ -235,6 +237,8 @@ const facebookAuthentication = new FacebookStrategy( {
       }
 
     } catch ( error ) {
+
+      console.log( error );
      
       done( error );
 

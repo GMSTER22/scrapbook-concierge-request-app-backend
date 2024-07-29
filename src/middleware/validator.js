@@ -11,8 +11,6 @@ const validator = ( req, res, next ) => {
 
     const errors = result.array();
 
-    console.warn( errors );
-
     const message = formatValidatorErrorMessage( errors );
     
     return res
