@@ -29,6 +29,6 @@ router.use( '/user-requests', ensureAuth, usersRequestsRouter );
 
 router.use( '/password-reset', passwordResetRouter );
 
-router.use( '/notifications', ensureAuth, notificationsRouter );
+router.use( '/notifications', notificationsRouter );
 
 module.exports = router;

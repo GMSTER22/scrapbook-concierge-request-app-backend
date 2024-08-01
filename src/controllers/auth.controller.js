@@ -135,8 +135,6 @@ const socialMediaAuthentication = ( req, res ) => {
 
 const authFailure = ( req, res ) => {
 
-  console.log( req.session, 'test user' )
-
   res
   
     .status( 400 )

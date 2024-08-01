@@ -93,6 +93,12 @@ app.use( '/', require( './src/routes/index' ) );
 
 app.use( ( err, req, res, next ) => {
 
+  if ( err.message === 'Wrong auth' ) return res
+  
+    .status( 200 )
+    
+    .redirect( `${config.CLIENT_URL}/login?err=wrong-auth` );
+
   res
   
     .status( 500 )

@@ -15,7 +15,7 @@ const connectDb = async callback => {
     
     callback( error );
 
-    console.log(error, 'error connecting to server');
+    console.log( error, 'error connecting to server' );
 
   }
 

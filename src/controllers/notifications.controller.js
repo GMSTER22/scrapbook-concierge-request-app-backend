@@ -5,7 +5,7 @@ const UserModel = require( '../models/users.model' );
 
 const { matchedData } = require('express-validator');
 
-const { sendEmailToUsers } = require( '../services/sendEmail.service' );
+const { sendEmailsToUsers } = require( '../services/sendEmail.service' );
 
 const notifyUsers = async ( req, res ) => {
 
@@ -87,7 +87,19 @@ const notifyUsers = async ( req, res ) => {
 
     } );
 
-    await sendEmailToUsers( users.values() );
+    // Object.values( uniqueUsersToNotify ).forEach( user => console.log( user.id, user.email, user.requests.map( kit => kit.title ).join( ', ' ) ) )
+
+    console.log( Object.values( uniqueUsersToNotify ) );
+
+    const optInUsers = Object.values( uniqueUsersToNotify ).filter( user => user.emailOptIn );
+
+    console.log( 'optInUsers', optInUsers );
+
+    // return;
+
+    const result = await sendEmailsToUsers( optInUsers );
+
+    console.log( result, "emails outcomes" );
 
     res
     

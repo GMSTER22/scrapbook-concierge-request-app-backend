@@ -35,7 +35,9 @@ const localLogin = new LocalStrategy( {
 
       if ( ! user ) return done( null, false );
 
-      if ( user.googleId || user.facebookId ) return done( null, false );
+      // if ( user.googleId || user.facebookId ) return done( null, false );
+      
+      if ( user.googleId || user.facebookId )  throw new Error( 'Wrong auth', { cause: 'User previously signed up with a different authentication method.' } );
 
       bcrypt.compare( sanitizedPassword, user?.password, ( err, result ) => {
 
@@ -86,12 +88,11 @@ const localSignup = new LocalStrategy( {
       const sanitizedUsername = req.body.username.trim();
 
       const user = await UserModel.findOne( { email: sanitizedEmail } ).exec();
-
+      
       if ( user ) return done( null, false );
 
       bcrypt.hash( sanitizedPassword, SALT_ROUNDS, async ( err, hash ) => {
 
-        // if ( err ) return done( null, false );
         if ( err ) return done( err );
 
         const newUser = await UserModel.create( { 
@@ -136,7 +137,25 @@ const googleAuthentication = new GoogleStrategy( {
 
       const user = await UserModel.findOne( { googleId: profile.id } ).exec();
 
-      if ( user ) {
+      if ( ! user ) {
+
+        const newUser = await UserModel.create( { 
+
+          googleId: profile.id,
+          
+          username: profile.name.givenName,
+          
+          email: profile.emails[ 0 ].value
+        
+        } );
+
+        return done( null, newUser );
+
+      } else if ( ! user.googleId ) {
+
+        throw new Error( 'Wrong auth', { cause: 'User previously signed up with a different authentication method.' } );
+
+      } else {
 
         return done( 
           
@@ -155,20 +174,6 @@ const googleAuthentication = new GoogleStrategy( {
           } 
         
         );
-
-      } else {
-
-        const newUser = await UserModel.create( { 
-
-          googleId: profile.id,
-          
-          username: profile.name.givenName,
-          
-          email: profile.emails[ 0 ].value
-        
-        } );
-
-        return done( null, newUser );
 
       }
 
@@ -198,9 +203,32 @@ const facebookAuthentication = new FacebookStrategy( {
 
     try {
 
-      const user = await UserModel.findOne( { facebookId: profile.id } ).exec();
+      // const user = await UserModel.findOne( { facebookId: profile.id } ).exec();
+      const user = await UserModel.findOne( { email: profile.emails[ 0 ].value } ).exec();
 
-      if ( user ) {
+      // console.log( profile, 'profile' );
+
+      // console.log( user, 'user data' );
+
+      if ( ! user ) {
+
+        const newUser = await UserModel.create( { 
+
+          facebookId: profile.id,
+          
+          username: profile.displayName,
+          
+          email: profile.emails[ 0 ].value
+        
+        } );
+
+        return done( null, newUser );
+
+      } else if ( ! user.facebookId ) {
+
+        throw new Error( 'Wrong auth', { cause: 'User previously signed up with a different authentication method.' } );
+
+      } else {
 
         return done( 
           
@@ -220,25 +248,53 @@ const facebookAuthentication = new FacebookStrategy( {
         
         );
 
-      } else {
-
-        const newUser = await UserModel.create( { 
-
-          facebookId: profile.id,
-          
-          username: profile.displayName,
-          
-          email: profile.emails[ 0 ].value
-        
-        } );
-
-        return done( null, newUser );
-
       }
+
+      // const user = await UserModel.findOne( { facebookId: profile.id } ).exec();
+
+      // console.log( profile, 'profile' );
+
+      // console.log( user, 'user data' );
+
+      // if ( user ) {
+
+      //   return done( 
+          
+      //     null, 
+          
+      //     {
+
+      //       id: user._id,
+      
+      //       username: user.username,
+
+      //       email: user.email,
+      
+      //       admin: user.admin
+      
+      //     } 
+        
+      //   );
+
+      // } else {
+
+      //   const newUser = await UserModel.create( { 
+
+      //     facebookId: profile.id,
+          
+      //     username: profile.displayName,
+          
+      //     email: profile.emails[ 0 ].value
+        
+      //   } );
+
+      //   return done( null, newUser );
+
+      // }
 
     } catch ( error ) {
 
-      console.log( error );
+      // console.log( error );
      
       done( error );
 
