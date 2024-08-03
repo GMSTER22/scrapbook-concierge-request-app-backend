@@ -111,7 +111,11 @@ const socialMediaAuthentication = ( req, res ) => {
           
           } );
   
-        else res.status( 200 ).redirect( `${config.CLIENT_URL}/login?token=${token}` );
+        else res
+        
+          .status( 200 )
+          
+          .redirect( `${config.CLIENT_URL}/login?token=${token}` );
   
       } 
     

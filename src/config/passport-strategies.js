@@ -88,7 +88,7 @@ const localSignup = new LocalStrategy( {
       const sanitizedUsername = req.body.username.trim();
 
       const user = await UserModel.findOne( { email: sanitizedEmail } ).exec();
-      
+
       if ( user ) return done( null, false );
 
       bcrypt.hash( sanitizedPassword, SALT_ROUNDS, async ( err, hash ) => {
@@ -149,7 +149,21 @@ const googleAuthentication = new GoogleStrategy( {
         
         } );
 
-        return done( null, newUser );
+        return done( 
+          
+          null, 
+          
+          {
+
+            id: newUser._id,
+
+            username: newUser.username,
+
+            admin: newUser.admin
+
+          } 
+        
+        );
 
       } else if ( ! user.googleId ) {
 
@@ -166,8 +180,6 @@ const googleAuthentication = new GoogleStrategy( {
             id: user._id,
       
             username: user.username,
-
-            email: user.email,
       
             admin: user.admin
       
@@ -206,10 +218,6 @@ const facebookAuthentication = new FacebookStrategy( {
       // const user = await UserModel.findOne( { facebookId: profile.id } ).exec();
       const user = await UserModel.findOne( { email: profile.emails[ 0 ].value } ).exec();
 
-      // console.log( profile, 'profile' );
-
-      // console.log( user, 'user data' );
-
       if ( ! user ) {
 
         const newUser = await UserModel.create( { 
@@ -239,8 +247,6 @@ const facebookAuthentication = new FacebookStrategy( {
             id: user._id,
       
             username: user.username,
-
-            email: user.email,
       
             admin: user.admin
       

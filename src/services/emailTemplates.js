@@ -437,7 +437,7 @@ const getNotificationEmailTemplate = ( username, email, requests, emailOptIn='fa
                         </tr>
                         <tr>
                           <td align="left" style="font-size:0px;padding:10px 25px;padding-bottom:16px;word-break:break-word;">
-                            <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:1.5;text-align:left;color:#525252;">We are happy to announce that some of the scrapbooks you've been waiting for are now available:</div>
+                            <div style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;line-height:1.5;text-align:left;color:#525252;">We are happy to announce that some of the scrapbook layouts you've been waiting for are now available:</div>
                           </td>
                         </tr>
                         <tr>
