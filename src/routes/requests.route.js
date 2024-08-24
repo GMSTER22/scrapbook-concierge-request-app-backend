@@ -5,7 +5,19 @@ const { body, param, query } = require( 'express-validator' );
 
 const { validator } = require( '../middleware/validator' );
 
-const { getSingleRequest, getRequests, createRequest, updateRequest, deleteRequest } = require( '../controllers/requests.controller' );
+const { getSingleRequest, getRequestsByTitle, getRequests, createRequest, updateRequest, deleteRequest } = require( '../controllers/requests.controller' );
+
+router.get( 
+  
+  '/search', 
+  
+  query( 'title' ).trim().notEmpty().escape(), 
+  
+  validator, 
+  
+  getRequestsByTitle 
+
+);
 
 router.get( 
   
@@ -33,7 +45,9 @@ router.get(
 
   query( 'sort_by' ).optional().trim().escape(), 
 
-  query( 'order_by' ).optional().trim().escape(), 
+  query( 'order_by' ).optional().trim().escape(),
+
+  validator,
   
   getRequests 
 

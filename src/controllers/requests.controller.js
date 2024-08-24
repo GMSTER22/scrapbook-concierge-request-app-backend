@@ -49,6 +49,66 @@ const getSingleRequest = async ( req, res ) => {
   
 }
 
+const getRequestsByTitle = async ( req, res ) => {
+
+  try {
+    
+    const title = req.query.title;
+    
+    const sortBy = req.query.sort_by ?? 'users';
+
+    const orderBy = req.query.order_by ?? 'asc';
+
+    const requests = await RequestModel
+    
+      .find( { 
+        
+        'title': {
+          
+          $regex: new RegExp( title ), $options: 'i'
+        
+        }
+      
+      } )
+      
+      .sort( {
+        
+        [sortBy]: orderBy,
+
+        title: 'asc'
+      
+      } );
+      
+    res
+    
+      .status( 200 )
+      
+      .json( {
+
+        message: 'Success',
+
+        requests
+
+      } );
+
+  } catch ( error ) {
+
+    console.log( error );
+
+    res
+    
+      .status( 500 )
+      
+      .json( {
+        
+        message: `An error occurred while searching "${title}".\n Try again later.`
+      
+      } );
+
+  }
+
+}
+
 const getRequests = async ( req, res ) => {
 
   try {
@@ -87,7 +147,13 @@ const getRequests = async ( req, res ) => {
         
         .limit( limit )
 
-        .sort( { [sortBy]: orderBy } );
+        .sort( {
+        
+          [sortBy]: orderBy,
+  
+          title: 'asc'
+        
+        } );
       
     } else if ( userId ) {
 
@@ -109,7 +175,13 @@ const getRequests = async ( req, res ) => {
         
         .limit( limit )
 
-        .sort( { [sortBy]: orderBy } );
+        .sort( {
+        
+          [sortBy]: orderBy,
+  
+          title: 'asc'
+        
+        } );
 
     } else {
       
@@ -123,10 +195,16 @@ const getRequests = async ( req, res ) => {
         
         .limit( limit )
         
-        .sort( { [sortBy]: orderBy } );
+        .sort( {
+        
+          [sortBy]: orderBy,
+  
+          title: 'asc'
+        
+        } );
 
     }
-
+      
     res
     
       .status( 200 )
@@ -134,15 +212,15 @@ const getRequests = async ( req, res ) => {
       .json( {
 
         message: 'Success',
-
+        
         requests,
-
+        
         page,
-
+        
         limit,
-
+        
         total: Math.ceil( total / limit )
-
+        
       } );
 
   } catch ( error ) {
@@ -364,6 +442,8 @@ const deleteRequest = async ( req, res ) => {
 module.exports = {
 
   getSingleRequest,
+
+  getRequestsByTitle,
   
   getRequests,
 
