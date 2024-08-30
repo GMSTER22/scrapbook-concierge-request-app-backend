@@ -447,7 +447,7 @@ const getNotificationEmailTemplate = ( username, email, requests, emailOptIn='fa
                                 ${ requests.map( ( { title, url } ) => {
                                   return `
                                   <tr>
-                                    <td align="center" bgcolor="#fafafa" role="presentation" style="border:none;border-radius:3px;cursor:auto;mso-padding-alt:0px 30px;background:#fafafa;" valign="middle">
+                                    <td align="left" bgcolor="#fafafa" role="presentation" style="border:none;border-radius:3px;cursor:auto;mso-padding-alt:0px 30px;background:#fafafa;" valign="middle">
                                       <a href="${ url }" style="display:inline-block;background:#fafafa;color:#196ad4;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:16px;font-weight:normal;line-height:1.5;margin:0;text-decoration:underline;text-transform:none;padding:0px 30px;mso-padding-alt:0px;border-radius:3px;" target="_blank"> ${ title } </a>
                                     </td>
                                   </tr>

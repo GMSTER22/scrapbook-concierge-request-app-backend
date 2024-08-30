@@ -11,8 +11,6 @@ const notifyUsers = async ( req, res ) => {
 
   try {
 
-    // const { requestIds } = req.body;
-
     const { requestIds } = matchedData( req );
 
     if ( ! requestIds?.length ) return res
@@ -87,17 +85,15 @@ const notifyUsers = async ( req, res ) => {
 
     } );
 
-    // Object.values( uniqueUsersToNotify ).forEach( user => console.log( user.id, user.email, user.requests.map( kit => kit.title ).join( ', ' ) ) )
-
     console.log( Object.values( uniqueUsersToNotify ) );
 
     const optInUsers = Object.values( uniqueUsersToNotify ).filter( user => user.emailOptIn );
 
     console.log( 'optInUsers', optInUsers );
 
-    // return;
-
     const result = await sendEmailsToUsers( optInUsers );
+
+    const successfulOutcomes = result.filter( emailResult => emailResult.status === 'fulfilled' );
 
     console.log( result, "emails outcomes" );
 
@@ -107,7 +103,7 @@ const notifyUsers = async ( req, res ) => {
       
       .json( {
       
-        message: 'Emails Sent to users.'
+        message: `${ successfulOutcomes.length }/${ result.length } concerned users were emailed.`
     
       } );
 

@@ -50,10 +50,10 @@ const getSingleRequest = async ( req, res ) => {
 }
 
 const getRequestsByTitle = async ( req, res ) => {
-
+  
+  const title = req.query.title;
+  
   try {
-    
-    const title = req.query.title;
     
     const sortBy = req.query.sort_by ?? 'users';
 
