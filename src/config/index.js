@@ -12,9 +12,9 @@ const CLIENT_URL = process.env.ENV === 'production' ?
 
 const SERVER_URL = process.env.ENV === 'production' ? 
 
-  'https://scrapbook-concierge-request-app-backend.onrender.com'
+  process.env.SERVER_URL
 
-  : 'http://localhost:3000' ;
+  : 'http://localhost:3000';
 
 const databaseURI = process.env.MONGO_URI;
 

@@ -85,11 +85,11 @@ const notifyUsers = async ( req, res ) => {
 
     } );
 
-    console.log( Object.values( uniqueUsersToNotify ) );
+    // console.log( Object.values( uniqueUsersToNotify ) );
 
     const optInUsers = Object.values( uniqueUsersToNotify ).filter( user => user.emailOptIn );
 
-    console.log( 'optInUsers', optInUsers );
+    // console.log( 'optInUsers', optInUsers );
 
     const result = await sendEmailsToUsers( optInUsers );
 

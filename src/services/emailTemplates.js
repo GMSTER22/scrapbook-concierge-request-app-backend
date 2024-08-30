@@ -576,7 +576,7 @@ const getNotificationEmailTemplate = ( username, email, requests, emailOptIn='fa
                               <tbody>
                                 <tr>
                                   <td align="center" bgcolor="#e7e7e7" role="presentation" style="border:none;border-radius:3px;cursor:auto;mso-padding-alt:0px 30px;background:#e7e7e7;" valign="middle">
-                                    <a href="${config.CLIENT_URL}/subscription?email=${email}&emailOptIn=true" style="display:inline-block;background:#e7e7e7;color:#196ad4;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;line-height:120%;margin:0;text-decoration:underline;text-transform:none;padding:0px 30px;mso-padding-alt:0px;border-radius:3px;" target="_blank"> Unsubscribe </a>
+                                    <a href="${config.CLIENT_URL}/subscription?email=${email}&emailOptIn=true" style="display:inline-block;background:#e7e7e7;color:#196ad4;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:12px;font-weight:normal;line-height:120%;margin:0;text-decoration:underline;text-transform:none;padding:0px 30px;mso-padding-alt:0px;border-radius:3px;" target="_blank"> Unsubscribe </a>
                                   </td>
                                 </tr>
                               </tbody>
