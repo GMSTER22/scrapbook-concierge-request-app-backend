@@ -28,11 +28,11 @@ async function sendPasswordRecoveryEmail( userId, email, name, resetToken ) {
   // send mail with defined transport object
   const info = await transporter.sendMail( {
 
-    from: `"SCR" <${process.env.EMAIL}>`, // sender address
+    from: `"Scrapbook Concierge Requests" <${process.env.EMAIL}>`, // sender address
 
     to: email, // list of receivers
 
-    subject: 'SCR Password Recovery', // Subject line
+    subject: 'Password Recovery', // Subject line
 
     //text: '', // plain text body
 
@@ -48,7 +48,7 @@ async function sendEmailsToUsers( users ) {
 
     transporter.sendMail( {
 
-      from: `"SCR" <${process.env.EMAIL}>`, // sender address
+      from: `"Scrapbook Concierge Requests" <${process.env.EMAIL}>`, // sender address
 
       to: email, // list of receivers
 
