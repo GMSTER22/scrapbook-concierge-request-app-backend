@@ -7,7 +7,7 @@ const RequestSchema = new mongoose.Schema( {
 
     type: Date,
 
-    default: Date.now()
+    default: () => new Date()
 
   },
 
