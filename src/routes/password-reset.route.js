@@ -7,9 +7,13 @@ const { sendEmailToken, resetPassword } = require( '../controllers/password-rese
 
 const { validator } = require( '../middleware/validator' );
 
+const { strictLimiter } = require( '../config/rate-limiter' );
+
 router.post( 
   
   '/', 
+
+  strictLimiter,
   
   body( 'email' ).trim().notEmpty().isEmail().escape(), 
   
@@ -22,6 +26,8 @@ router.post(
 router.patch( 
   
   '/', 
+
+  strictLimiter, 
   
   body( 'userId' ).trim().notEmpty().escape(), 
   
