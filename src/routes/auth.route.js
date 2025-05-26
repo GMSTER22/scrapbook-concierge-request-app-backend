@@ -9,9 +9,13 @@ const { localLogin, localSignup, socialMediaAuthentication, authFailure, logoutU
 
 const { validator } = require( '../middleware/validator' );
 
+const { moderateLimiter, strictLimiter } = require( '../config/rate-limiter' );
+
 router.post( 
   
   '/login', 
+
+  moderateLimiter,
 
   body( 'email' ).trim().notEmpty().isEmail().escape(), 
 
@@ -28,6 +32,8 @@ router.post(
 router.post( 
   
   '/signup/password',
+
+  strictLimiter,
   
   body( 'email' ).trim().notEmpty().isEmail().escape(), 
 
@@ -45,6 +51,8 @@ router.post(
 router.get( 
   
   '/auth/google', 
+
+  moderateLimiter,
   
   passport.authenticate( 'google', { scope: [ 'profile', 'email' ] } ) 
 
@@ -61,16 +69,11 @@ router.get(
 );
 
 // Facebook Authentication
-// router.get( 
-  
-//   '/auth/facebook', 
-  
-//   passport.authenticate( 'facebook', { authType: 'reauthenticate', scope: [ 'user_friends', 'manage_pages' ] } ) 
-
-// );
 router.get( 
   
   '/auth/facebook', 
+
+  moderateLimiter,
   
   passport.authenticate( 'facebook', { scope: [ 'email' ] } ) 
 

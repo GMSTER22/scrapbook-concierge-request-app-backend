@@ -7,6 +7,8 @@ const { notifyUsers, manageSubscriptions } = require( '../controllers/notificati
 
 const { validator } = require( '../middleware/validator' );
 
+const { strictLimiter } = require( '../config/rate-limiter' );
+
 router.post( 
   
   '/', 
@@ -22,6 +24,8 @@ router.post(
 router.patch( 
   
   '/subscriptions', 
+
+  strictLimiter, 
   
   body( 'email' ).trim().notEmpty().isEmail().escape(),  
 
