@@ -19,7 +19,7 @@ const strictLimiter = rateLimit( {
 
   windowMs: 10 * 60 * 1000, // 10 minutes
 
-  limit: 3, // Limit each IP to 100 requests per `window` (here, per 10 minutes)
+  limit: 10, // Limit each IP to 10 requests per `window` (here, per 10 minutes)
 
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 

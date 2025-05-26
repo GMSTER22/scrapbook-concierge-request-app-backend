@@ -98,6 +98,7 @@ This is the backend service for the Scrapbook Concierge Request App, a platform 
 | POST   | `/api/notifications/password-reset`              | User makes a request to reset password  |
 | PATCH  | `/api/notifications/password-reset`              | Update the user password                |
 
+
 ## ✉️ Email Notification System
   - Built with Nodemailer (utilizing (Mailtrap)[https://mailtrap.io/])
 
@@ -106,11 +107,6 @@ This is the backend service for the Scrapbook Concierge Request App, a platform 
   - Includes secure unsubscribe tokens
 
   - Respects user opt-out settings
-
-
-##  🧪 Future Enhancements
-
-  - Unit and integration tests
 
 
 ## 📄 License
